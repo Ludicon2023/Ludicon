@@ -1,0 +1,20 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-ludiconprototype-staging-173025-authRole",
+      "UnauthRoleArn": "arn:aws:iam::719579807386:role/amplify-ludiconprototype-staging-173025-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::719579807386:role/amplify-ludiconprototype-staging-173025-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-ludiconprototype-staging-173025-deployment",
+      "UnauthRoleName": "amplify-ludiconprototype-staging-173025-unauthRole",
+      "StackName": "amplify-ludiconprototype-staging-173025",
+      "StackId": "arn:aws:cloudformation:us-east-2:719579807386:stack/amplify-ludiconprototype-staging-173025/3b490b40-c8d7-11ed-ba0b-02efc8af91aa",
+      "AmplifyAppId": "d1sb8jdjoeau2i"
+    },
+    "categories": {
+      "auth": {
+        "LudiconPrototype": {}
+      }
+    }
+  }
+}
