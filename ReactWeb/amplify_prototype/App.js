@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'reac
 
 import { Amplify, Auth } from 'aws-amplify';
 import awsconfig from './src/aws-exports';
+import Dashboard from './Dashboard';
 Amplify.configure(awsconfig);
 
 const App = () => {
@@ -151,10 +152,11 @@ const App = () => {
 
   return user ? (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome, {user.attributes.name}!</Text>
+      {/* <Text style={styles.title}>Welcome, {user.attributes.name}!</Text>
       <TouchableOpacity style={styles.button} onPress={handleSignOut}>
         <Text style={styles.buttonText}>Sign Out</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      <Dashboard></Dashboard>
     </View>
   ) : (
       signUpStage === 'signUp'
