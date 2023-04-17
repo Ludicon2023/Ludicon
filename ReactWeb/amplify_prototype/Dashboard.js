@@ -7,6 +7,7 @@ import Find from './pages/Find';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import BottomNavbar from './components/BottomNavbar';
+import Frame from './components/Frame';
 
 const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState('Find');
@@ -31,27 +32,18 @@ const Dashboard = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <Frame>
       {/* render the current page */}
-      {renderPage()}
-
+        {renderPage()}
       {/* bottom navbar */}
-      <View style={styles.navbarContainer}>
+      <View>
         <BottomNavbar handleNavigation={handleNavigation} currentPage={currentPage} />
       </View>
-    </View>
+    </Frame>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  navbarContainer: {
-    
-    height: 92.18,
-  },
 });
 
 export default Dashboard;
