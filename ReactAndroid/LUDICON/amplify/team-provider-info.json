@@ -16,5 +16,26 @@
         "LUDICON": {}
       }
     }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-ludicon-dev-132349-authRole",
+      "UnauthRoleArn": "arn:aws:iam::292878410620:role/amplify-ludicon-dev-132349-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::292878410620:role/amplify-ludicon-dev-132349-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-ludicon-dev-132349-deployment",
+      "UnauthRoleName": "amplify-ludicon-dev-132349-unauthRole",
+      "StackName": "amplify-ludicon-dev-132349",
+      "StackId": "arn:aws:cloudformation:us-east-2:292878410620:stack/amplify-ludicon-dev-132349/fdb899a0-dd4c-11ed-a3f1-067a9af7c577",
+      "AmplifyAppId": "d1zd1r1r1m78l0"
+    },
+    "categories": {
+      "auth": {
+        "LUDICON": {}
+      },
+      "api": {
+        "ludicon": {}
+      }
+    }
   }
 }

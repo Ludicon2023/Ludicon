@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import Navigation from './src/navigation';
+import Navigation from '../ludiconbeta/src/navigation';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, SafeAreaView } from 'react-native';
-import { Amplify } from 'aws-amplify';
-// import {withAuthenticator} from 'aws-amplify-react-native';
+import { Amplify, Auth } from 'aws-amplify';
+// import { withAuthenticator, Theme } from '@aws-amplify/ui-react';
 import config from "./src/aws-exports";
-
-// import { Auth } from 'aws-amplify';
 import { Linking } from 'react-native';
 
 Amplify.configure(config);
@@ -25,6 +23,7 @@ Amplify.configure(config);
 // });
 
 const App = () => {
+  //Auth.signOut();
   return (
     <SafeAreaView style={styles.root}>
       <Navigation />
@@ -73,5 +72,7 @@ const signUpConfig = {
     },
   ],
 };
-// export default withAuthenticator(App, { signUpConfig });
+
+// const customTheme = {...Theme}
+// export default withAuthenticator(App);
 export default App;

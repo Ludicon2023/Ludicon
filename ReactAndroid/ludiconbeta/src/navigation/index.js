@@ -3,12 +3,12 @@ import {View, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import SignInScreen from '../screens/SignInScreen';
-import SignUpScreen from '../screens/SignUpScreen';
-import ConfirmEmailScreen from '../screens/ConfirmEmailScreen';
-import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
-import NewPasswordScreen from '../screens/NewPasswordScreen';
-import HomeScreen from '../screens/HomeScreen';
+import SignInScreen from '../../../ludiconbeta/src/screens/SignInScreen';
+import SignUpScreen from '../../../ludiconbeta/src/screens/SignUpScreen';
+import ConfirmEmailScreen from '../../../ludiconbeta/src/screens/ConfirmEmailScreen';
+import ForgotPasswordScreen from '../../../ludiconbeta/src/screens/ForgotPasswordScreen';
+import NewPasswordScreen from '../../../ludiconbeta/src/screens/NewPasswordScreen';
+import HomeScreen from '../../../ludiconbeta/src/screens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 
