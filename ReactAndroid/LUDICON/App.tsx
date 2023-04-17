@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
-// import { Amplify } from '@aws-amplify/core';
-// import { withAuthenticator } from 'aws-amplify-react-native';
+import Navigation from './src/navigation';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { Amplify } from 'aws-amplify';
+// import {withAuthenticator} from 'aws-amplify-react-native';
+import config from "./src/aws-exports";
 
 // import { Auth } from 'aws-amplify';
 import { Linking } from 'react-native';
 
-
+Amplify.configure(config);
 // Amplify.configure({
 //   Auth: {
 //     region: 'us-east-2',
@@ -23,81 +25,53 @@ import { Linking } from 'react-native';
 // });
 
 const App = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = async () => {
-    try {
-      // const user = await Auth.signIn(username, password);
-      console.log('Username:', username);
-      console.log('Password:', password);
-      // navigate to the authenticated portion of the app
-      // Linking.openURL('http://localhost:8000/logged_in.html');
-    } catch (error) {
-      console.log('Error:', error);
-    }
-  };
-
   return (
-    <View style={styles.container}>
-        <Image source={require('./assets/logo.png')} style={styles.image} />
-      {/* <Text style={styles.title}>Ludicon</Text> */}
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        secureTextEntry={true}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.root}>
+      <Navigation />
+    </SafeAreaView>
   );
 };
-export default App;
-// export default withAuthenticator(App);
-
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  image: {
-    width: 370,
-    height: 150,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 30,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    width: '80%',
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: 'blue',
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    backgroundColor: '#F9FBFC',
   },
 });
+
+const signUpConfig = {
+  header: "My Customized Sign Up",
+  hideAllDefaults: true,
+  signUpFields: [
+    {
+      label: "Full name",
+      key: "name",
+      required: true,
+      displayOrder: 1,
+      type: "string",
+    },
+    {
+      label: "Email",
+      key: "email",
+      required: true,
+      displayOrder: 2,
+      type: "string",
+    },
+    {
+      label: "Username",
+      key: "preferred_username",
+      required: true,
+      displayOrder: 3,
+      type: "string",
+    },
+    {
+      label: "Password",
+      key: "password",
+      required: true,
+      displayOrder: 4,
+      type: "password",
+    },
+  ],
+};
+// export default withAuthenticator(App, { signUpConfig });
+export default App;
