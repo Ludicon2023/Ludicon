@@ -1,2 +1,0 @@
-run command "python -m http.server"
-then in web browser open localhost:8000
