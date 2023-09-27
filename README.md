@@ -5,7 +5,9 @@
 - follow instructions from the link below (do not worry about Multiple adb versions)
 - https://docs.expo.dev/workflow/android-studio-emulator/#set-up-android-studios-tools
 
-
+## clone repo
+- git clone or whatnot and cd into LUDICON
+- 
 ## setup amplify 
 - install amplify cli https://docs.amplify.aws/cli/start/install/
 - run 'amplify pull' inside the project directory
