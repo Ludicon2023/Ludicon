@@ -8,6 +8,7 @@
 
 ## setup amplify 
 - install amplify cli https://docs.amplify.aws/cli/start/install/
+- run 'amplify pull' inside the project directory
 ## install npm dependencies
 ```
 npm install
