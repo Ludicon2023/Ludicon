@@ -1,0 +1,58 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-ludiconfinal2-ludicon-162647-authRole",
+      "UnauthRoleArn": "arn:aws:iam::719579807386:role/amplify-ludiconfinal2-ludicon-162647-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::719579807386:role/amplify-ludiconfinal2-ludicon-162647-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-ludiconfinal2-ludicon-162647-deployment",
+      "UnauthRoleName": "amplify-ludiconfinal2-ludicon-162647-unauthRole",
+      "StackName": "amplify-ludiconfinal2-ludicon-162647",
+      "StackId": "arn:aws:cloudformation:us-east-1:719579807386:stack/amplify-ludiconfinal2-ludicon-162647/bd2746c0-598e-11ee-9a04-0eabb10b55f3",
+      "AmplifyAppId": "d1q0pir55n38w0"
+    }
+  },
+  "auth": {
+    "ludiconfinal24f0f6bf1": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-ludiconfinal2-ludicon-162647-deployment/amplify-cfn-templates/auth/ludiconfinal24f0f6bf1-cloudformation-template.json",
+        "logicalId": "authludiconfinal24f0f6bf1"
+      },
+      "lastPushTimeStamp": "2023-09-27T16:47:47.955Z",
+      "output": {
+        "UserPoolId": "us-east-1_LZjM0uEq1",
+        "AppClientIDWeb": "23u56rp0le0cfnh463p0ach910",
+        "AppClientID": "rhhaftvk1oree3hknlegof6eg",
+        "IdentityPoolId": "us-east-1:379a3f6f-565f-47b2-a00c-1de566ac3aa2",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:719579807386:userpool/us-east-1_LZjM0uEq1",
+        "IdentityPoolName": "ludiconfinal24f0f6bf1_identitypool_4f0f6bf1__ludicon",
+        "UserPoolName": "ludiconfinal24f0f6bf1_userpool_4f0f6bf1"
+      },
+      "lastPushDirHash": "u68wv8SjMfkrZCoxypugGM2LKCQ="
+    }
+  }
+}
