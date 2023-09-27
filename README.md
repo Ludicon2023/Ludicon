@@ -5,6 +5,10 @@
 - follow instructions from the link below (do not worry about Multiple adb versions)
 - https://docs.expo.dev/workflow/android-studio-emulator/#set-up-android-studios-tools
 
+
+## setup amplify 
+- install amplify cli https://docs.amplify.aws/cli/start/install/
+- run 'amplify pull' inside the project directory
 ## install npm dependencies
 ```
 npm install
