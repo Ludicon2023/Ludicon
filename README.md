@@ -12,7 +12,7 @@
 - install amplify cli https://docs.amplify.aws/cli/start/install/
 - run 'amplify pull' inside the project directory
 - Select the authentication method you want to use: AWS profile 
-- Please choose the profile you want to use: Yuri
+- Please choose the profile you want to use: Yuri (learn how to setup profile here https://docs.amplify.aws/start/getting-started/installation/q/integration/react-native/#configure-the-amplify-cli)
 - Which app are you working on? LUDICON2 d27nm4roc7ta02
 - Backend environment 'dev' found. Initializing..
 - Choose your default editor: Visual Studio Code
