@@ -12,7 +12,8 @@
 ## setup amplify 
 - install amplify cli https://docs.amplify.aws/cli/start/install/
 - run 'amplify pull' inside the project directory
-- make sure to select LUDICONFINAL2 on OHIO 
+- make sure to select LUDICONFINAL2 on OHIO when selecting the app
+- might need to create AWS/Amplify profile https://docs.amplify.aws/start/getting-started/installation/q/integration/react-native/#configure-the-amplify-cli)
 ![image](https://github.com/Ludicon2023/Ludicon/assets/70405634/82c4f049-2716-4f90-8588-e2b2d24e3f63)
 
 ## install npm dependencies
