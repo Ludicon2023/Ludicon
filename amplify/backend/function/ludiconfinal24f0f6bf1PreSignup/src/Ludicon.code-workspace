@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "Ludicon",
+			"path": "../../../../.."
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}

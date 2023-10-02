@@ -2,7 +2,17 @@
   "auth": {
     "ludiconfinal24f0f6bf1": {
       "customAuth": false,
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn",
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "ludiconfinal24f0f6bf1PreSignup",
+          "triggerProvider": "Cognito"
+        }
+      ],
       "frontendAuthConfig": {
         "mfaConfiguration": "OFF",
         "mfaTypes": [
@@ -25,6 +35,32 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    }
+  },
+  "function": {
+    "ludiconfinal24f0f6bf1PreSignup": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_ludiconfinal24f0f6bf1PreSignup_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "ludiconfinal24f0f6bf1PreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_ludiconfinal24f0f6bf1PreSignup_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "ludiconfinal24f0f6bf1PreSignup"
+        }
+      ]
     }
   }
 }
