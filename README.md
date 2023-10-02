@@ -6,19 +6,16 @@
 - https://docs.expo.dev/workflow/android-studio-emulator/#set-up-android-studios-tools
 
 ## clone repo
-- git clone or whatnot and cd into LUDICON
+- git clone
+- cd into LUDICON
 - 
 ## setup amplify 
 - install amplify cli https://docs.amplify.aws/cli/start/install/
 - run 'amplify pull' inside the project directory
-- Select the authentication method you want to use: AWS profile 
-- Please choose the profile you want to use: Yuri (learn how to setup profile here https://docs.amplify.aws/start/getting-started/installation/q/integration/react-native/#configure-the-amplify-cli)
-- Which app are you working on? LUDICON2 d27nm4roc7ta02
-- Backend environment 'dev' found. Initializing..
-- Choose your default editor: Visual Studio Code
-- Choose the type of app that you're building: android
-- Where is your Res directory: (default) app/src/main/res
-- Do you plan on modifying this backend? No
+- make sure to select LUDICONFINAL2 on OHIO when selecting the app
+- might need to create AWS/Amplify profile https://docs.amplify.aws/start/getting-started/installation/q/integration/react-native/#configure-the-amplify-cli)
+![image](https://github.com/Ludicon2023/Ludicon/assets/70405634/82c4f049-2716-4f90-8588-e2b2d24e3f63)
+
 ## install npm dependencies
 ```
 npm install
