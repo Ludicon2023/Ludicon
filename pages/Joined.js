@@ -52,6 +52,13 @@ const Joined = () => {
     
   ];
   const [modalVisible, setModalVisible] = useState(false);
+  const [eventTitle, setEventTitle] = useState('');
+  const [eventLocation, setEventLocation] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [maxCapacity, setMaxCapacity] = useState('');
+  const [sport, setSport] = useState('');
+  const [skillLevel, setSkillLevel] = useState('');
+  const [gender, setGender] = useState('');
   const tableItemHeight = 207;
 
   const openModal = () => {
@@ -60,8 +67,58 @@ const Joined = () => {
   const closeModal = () => {
     setModalVisible(false);
   }
-  return (
 
+  const createEvent = async () => {
+    // Validation to ensure all fields are filled
+    if (!eventTitle || !eventLocation || !eventDate || !maxCapacity || !sport) {
+        alert('All fields are required!');
+        return;
+    }
+
+    const event = {
+        ID: "",
+        Name: eventTitle,
+        Place: eventLocation,
+        Description: "Sample description.",  // Hardcoded for now, user will be able to edit.
+        Capacity: parseInt(maxCapacity, 10), 
+        Organizer: "User Context",  // EZ FIX 
+        Attendees: ["User Context"],  // Just user creator 
+        SkillLevel: skillLevel,  // Hardcoded
+        Sport: sport,
+        Gender: gender, 
+        Picture: "someimage.jpg",  // Hardcoded Fix later
+        ChatLink: "somelink.link",  // Hardcoded
+        EventTime: eventDate,
+        CreationTime: new Date().toISOString(),  // Record the current time as the creation time
+        Coordinates: "56.77,67.99"  // Hardcoded
+    };
+
+    try {
+        const url = 'https://cors-anywhere.herokuapp.com/https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event';
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event),
+        });
+        
+        const data = await response.json();
+        console.log("Event created:", data);
+
+        // Close the modal and clear the input fields after successful event creation
+        setModalVisible(false);
+        setEventTitle('');
+        setEventLocation('');
+        setEventDate('');
+        setMaxCapacity('');
+        setSport('');
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+  return (
       <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={[styles.title, styles.titleContent]}>My Joined Games</Text>
@@ -82,23 +139,53 @@ const Joined = () => {
         />
       </View>
       <Modal
-  animationType="slide"
-  transparent={true}
-  visible={modalVisible}
-  onRequestClose={closeModal}
->
-  <View style={styles.centeredView}>
-    <View style={styles.modalView}>
-      <TextInput placeholder="Event Title" />
-      <TextInput placeholder="Event Location" />
-      <TextInput placeholder="Event Date"/>
-      <TextInput placeholder="Max Capacity" />
-      <TextInput placeholder="Sport"/>
-      <Button title="Create Event" onPress={() => console.log("created event")} />
-      <Button title="Cancel" onPress={closeModal} />
-    </View>
-  </View>
-</Modal>
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={closeModal}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <TextInput 
+            placeholder="Event Title" 
+            value={eventTitle}
+            onChangeText={setEventTitle}
+          />
+          <TextInput 
+            placeholder="Event Location" 
+            value={eventLocation}
+            onChangeText={setEventLocation}
+          />
+          <TextInput 
+            placeholder="Event Date"
+            value={eventDate}
+            onChangeText={setEventDate}
+          />
+          <TextInput 
+            placeholder="Max Capacity"
+            value={maxCapacity}
+            onChangeText={setMaxCapacity}
+          />
+          <TextInput 
+            placeholder="Sport"
+            value={sport}
+            onChangeText={setSport}
+          />
+          <TextInput 
+            placeholder="Skill Level"
+            value={skillLevel}
+            onChangeText={setSkillLevel}
+          />
+          <TextInput 
+            placeholder="Preferred Gender"
+            value={gender}
+            onChangeText={setGender}
+          />
+          <Button title="Create Event" onPress={createEvent} />
+          <Button title="Cancel" onPress={closeModal} />
+        </View>
+      </View>
+    </Modal>
     </View>
   );
 };
