@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+import { UserProvider, useUser } from './contexts/UserContext';
 
 import { Amplify, Auth } from 'aws-amplify';
 import awsconfig from './src/aws-exports';
@@ -7,25 +10,22 @@ import Dashboard from './Dashboard';
 Amplify.configure(awsconfig);
 
 const App = () => {
+  return (
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <UserProvider>
+        <AppContent />
+      </UserProvider>
+    </ApplicationProvider>
+  );
+};
+
+const AppContent = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmationCode, setConfirmationCode] = useState('');
-  const [user, setUser] = useState(null);
-  const [signUpStage, setSignUpStage] = useState('signUp');
 
-  useEffect(() => {
-    checkAuthState();
-  }, []);
-
-  const checkAuthState = async () => {
-    try {
-      const currentUser = await Auth.currentAuthenticatedUser();
-      setUser(currentUser);
-    } catch (error) {
-      console.log('User not signed in:', error);
-    }
-  };
+  const { user, setUser, signUpStage, setSignUpStage, handleSignOut } = useUser();
 
   const handleSignUp = async () => {
     try {
@@ -59,16 +59,6 @@ const App = () => {
       const loggedInUser = await Auth.signIn(email, password);
       setUser(loggedInUser);
       console.log('User signed in');
-    } catch (error) {
-      console.log('Error:', error);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await Auth.signOut();
-      setUser(null);
-      console.log('User signed out');
     } catch (error) {
       console.log('Error:', error);
     }
@@ -150,20 +140,18 @@ const App = () => {
     </View>
   );
 
-  return user ? (
-    <View style={styles.container}>
-      {/* <Text style={styles.title}>Welcome, {user.attributes.name}!</Text>
-      <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-        <Text style={styles.buttonText}>Sign Out</Text>
-      </TouchableOpacity> */}
-      <Dashboard></Dashboard>
-    </View>
-  ) : (
-      signUpStage === 'signUp'
-        ? renderSignUp()
-        : signUpStage === 'confirmSignUp'
-        ? renderConfirmSignUp()
-        : renderSignIn()
+  return (
+        user ? (
+          // User is authenticated, show Dashboard
+          <Dashboard handleSignOut={handleSignOut} />
+        ) : (
+          // User is not authenticated, show sign-up/sign-in forms
+          signUpStage === 'signUp'
+            ? renderSignUp()
+            : signUpStage === 'confirmSignUp'
+            ? renderConfirmSignUp()
+            : renderSignIn()
+        )
   );
 };
 

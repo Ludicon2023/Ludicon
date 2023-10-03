@@ -13,6 +13,7 @@ exports.handler = async (event, context) => {
   console.log("Request: ", event.request)
   let statusCode = 200;
   let body = "";
+  const currentTimestamp = Date.now();
 
   try {
     const ddbDocClient = DynamoDBDocumentClient.from(dynamo);
@@ -25,6 +26,14 @@ exports.handler = async (event, context) => {
           UserId: event.request.userAttributes.email,
           Email: event.request.userAttributes.email,
           Name:  event.request.userAttributes.name,
+          Age: 0,
+          Bio: "Hello",
+          Image: "url",
+          Events: [],
+          Sports: [],
+          joinedDate: currentTimestamp.toString(),
+          gender: "Non-Binary",
+          chatLinks: [],
         },
       })
     );

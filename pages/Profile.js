@@ -1,164 +1,125 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { Avatar, Text, Layout, Card, ListItem, Divider, Button } from '@ui-kitten/components';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Auth } from 'aws-amplify'; // Import Auth from AWS Amplify
+import { useUser } from '.././contexts/UserContext';
 
-const Profile = () => {
+const Stack = createStackNavigator();
+
+const sportsData = ['Football', 'Basketball', 'Tennis'];
+
+const Header = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={[styles.title, styles.titleContent]}>My Profile</Text>
-        <Image source={require('../assets/Vector.png')} style={[styles.image, styles.titleContent]} />
+    <Layout style={{ padding: 10, paddingTop: 36, backgroundColor: "#AAFFA7", borderRadius: 8 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text category="h4">My Profile</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+          <Avatar source={require('../assets/Vector.png')} size="small" />
+        </TouchableOpacity>
       </View>
-      <View style={styles.content}>
-        <View style={styles.profileContainer}>
-          {/* Profile picture and username */}
-          <View style={styles.profilePicture}>
-          <Image source={require('../assets/default_pfp.jpg')}style={{ width: '100%', height: '100%', borderRadius: 75 }}resizeMode="cover"/>
-            </View>
-            <View style={styles.nameContainer}>
-              <Text style={styles.fullName}>Full Name</Text>
-              <Text style={styles.username}>@username</Text>
-            </View>
-        </View>
-        <View style={styles.sectionsContainer}>
-          <View style={styles.statsContainer}>
-              <View style={[styles.statSection]}>
-                <Text style={styles.statNumber}>10</Text>
-                <Text style={styles.statTitle}>Attended</Text>
-              </View>
-              <View style={[styles.statSection]}>
-                <Text style={styles.statNumber}>5</Text>
-                <Text style={styles.statTitle}>Organized</Text>
-              </View>
-              <View style={[styles.statSection]}>
-                <Text style={styles.statNumber}>20</Text>
-                <Text style={styles.statTitle}>Buddies</Text>
-              </View>
-            </View>
-          <Text style={styles.bio}>
-              Bio:
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut mollis dolor. Quisque semper turpis vel velit tincidunt laoreet. 
-              Fusce aliquam tellus sit amet risus ultrices, ut blandit mi dictum. In bibendum neque massa, nec tincidunt nisl mollis vel. Donec 
-              consequat purus quis elit venenatis posuere. Ut a efficitur orci. Ut ullamcorper lacus ut sem luctus, nec gravida nunc molestie. 
-          </Text>
-              <Text style={styles.sports}>
-              Sports: Football, Basketball, Tennis
-            </Text>  
-          </View>
-          </View>
-        </View>
+    </Layout>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  titleContainer: {
-    flex: 0.12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingtop: 10,
-    backgroundColor: '#AAFFA7',
-  },
-  titleContent: {
-    top: 20,
-  },
-  image: {
-    width: 30,
-    height: 30,
-  },
-  content: {
-    flex: 0.88,
-    borderTopWidth: 3,
-    borderColor: 'black',
-    backgroundColor: 'white',
-  },
-  profileContainer: {
-    flex: 0.35,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderBottomWidth: 3,
-    borderColor: 'black',
-  },
-  sectionsContainer: {
-    flex: 0.65,
-    flexDirection: 'column',
-  },
-  section: {
-    borderBottomWidth: 3,
-    borderColor: 'black',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  text: {
-    fontSize: 16,
-  },
-  profilePicture: {
-    width: 120,
-    height: 120,
-    borderRadius: 75,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  nameContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  fullName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  username: {
-    fontSize: 16,
-    color: 'gray',
-  },
-  statsContainer: {
-    flex: 0.2,
-    flexDirection: 'row',
-    borderBottomWidth: 3,
-    borderColor: 'black',
-  },
-  statSection: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRightWidth: 3,
-    borderColor: 'black',
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  statTitle: {
-    fontSize: 12,
-  },
-  bio: {
-    flex:0.5,
-    padding: 16, 
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'left',
-    fontSize: 20,
-    borderBottomWidth: 1,
-    borderColor: 'black',
-  },
-  sports: {
-    flex: 0.4,
-    padding: 20,
-    backgroundColor: '#E6E6FA',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: 24,
+const Bio = () => {
+  const { user } = useUser();
+  return (
+    <Layout style={{ flex: 0.5, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 1, borderColor: 'grey', padding: 20, borderRadius: 8 }}>
+      <Avatar source={require('../assets/default_pfp.jpg')} size="giant" style={{ width: 100, height: 100, borderRadius: 75 }} />
+      <View style={{ marginTop: 20, alignItems: 'center' }}>
+        <Text category="h4">{user.attributes.name}</Text>
+        <Text appearance="hint">{user.attributes.email}</Text>
+      </View>
+    </Layout>
+  );
+};
 
-  },
-  
-});
+const BioCard = () => {
+  return (
+    <Card style={{ margin: 8, borderRadius: 16 }}>
+      <Text category="h4" style={{ fontWeight: 'bold', marginBottom: 8 }}>Bio</Text>
+      <Text category="p1">
+        Lorem
+      </Text>
+    </Card>
+  );
+};
 
-export default Profile;
+const SportsList = () => {
+  return (
+    <Card style={{ margin: 8, borderRadius: 16 }}>
+      <Text category="h4" style={{ fontWeight: 'bold', marginBottom: 8 }}>Sports</Text>
+      <Divider />
+      {sportsData.map((item, index) => (
+        <ListItem key={index} title={item} />
+      ))}
+    </Card>
+  );
+};
+
+const ProfileScreen = ({ navigation }) => {
+  return (
+    <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <Header navigation={navigation} />
+      <Bio />
+      <BioCard />
+      <SportsList />
+    </ScrollView>
+  );
+};
+
+const SettingsScreen = ({ navigation }) => {
+  const { handleSignOut } = useUser();
+
+
+  const handleDeleteAccount = () => {
+    // TODO: delete account logic here
+  };
+
+  return (
+    <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <Layout style={{ padding: 10, paddingTop: 36, backgroundColor: "#AAFFA7", borderRadius: 8 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text category="h4"> Back </Text>
+          </TouchableOpacity>
+          <Text category="h4">Settings</Text>
+        </View>
+      </Layout>
+
+      {/* Add your settings content here */}
+      
+      {/* Sign out Button */}
+      <Button
+        style={{ margin: 16 }}
+        status="primary"
+        onPress={handleSignOut}
+      >
+        Logout
+      </Button>
+
+      {/* Delete Account Button */}
+      <Button
+        style={{ margin: 16 }}
+        status="danger"
+        onPress={handleDeleteAccount}
+      >
+        Delete Account
+      </Button>
+    </ScrollView>
+  );
+};
+
+
+export default function Profile() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
