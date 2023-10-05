@@ -275,18 +275,21 @@ const EditProfileScreen = ({ navigation, profile, setProfile }) => {
 
       <Layout style={{ margin: 16 }}>
         <Input
+        style={{ marginBottom: 10 }}
           label="Username"
           placeholder="Enter your username"
           value={username}
           onChangeText={(text) => setUsername(text)}
         />
         <Input
+        style={{ marginBottom: 10 }}
           label="Profile Picture URL"
           placeholder="Enter your profile picture URL (Optional)"
           value={profilePicUrl}
           onChangeText={(text) => setProfilePicUrl(text)}
         />
         <Input
+        style={{ marginBottom: 10 }}
           label="Bio"
           placeholder="Enter your bio"
           multiline
@@ -295,6 +298,7 @@ const EditProfileScreen = ({ navigation, profile, setProfile }) => {
           onChangeText={(text) => setBio(text)}
         />
         <Datepicker
+        style={{ marginBottom: 10 }}
           label="Date of Birth"
           placeholder="Select your date of birth"
           date={dob || new Date(2000, 0, 1)}
@@ -303,6 +307,7 @@ const EditProfileScreen = ({ navigation, profile, setProfile }) => {
           max={maxDate}
         />
         <Select
+        style={{ marginBottom: 10 }}
           label="Gender"
           placeholder="Select your gender"
           value={gender}
@@ -315,6 +320,7 @@ const EditProfileScreen = ({ navigation, profile, setProfile }) => {
           ))}
         </Select>
         <Input
+        style={{ marginBottom: 10 }}
           label="Pronouns"
           placeholder="Enter your pronouns"
           value={pronouns}
