@@ -190,7 +190,7 @@ const SettingsScreen = ({ navigation }) => {
   );
 };
 
-const EditProfileScreen = ({ navigation, profile }) => {
+const EditProfileScreen = ({ navigation, profile, setProfile }) => {
   const [username, setUsername] = useState(profile.Name);
   const [bio, setBio] = useState(profile.Bio);
   const [profilePicUrl, setProfilePicUrl] = useState(profile.Image);
@@ -233,6 +233,7 @@ const EditProfileScreen = ({ navigation, profile }) => {
         // Profile updated successfully
         // You can handle success here, e.g., show a success message or navigate back
         console.log("Profile updated successfully");
+        setProfile(updatedProfile);
         navigation.goBack(); // Navigate back to the profile screen
       } else {
         // Handle error cases
@@ -359,7 +360,7 @@ export default function Profile() {
           {(props) => <SettingsScreen {...props} profile={profile} />}
         </Stack.Screen>
         <Stack.Screen name="EditProfile">
-          {(props) => <EditProfileScreen {...props} profile={profile} />}
+          {(props) => <EditProfileScreen {...props} profile={profile} setProfile={setProfile} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
