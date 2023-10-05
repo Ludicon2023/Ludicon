@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { UserProvider, useUser } from './contexts/UserContext';
 
 import { Amplify, Auth } from 'aws-amplify';
@@ -11,11 +12,14 @@ Amplify.configure(awsconfig);
 
 const App = () => {
   return (
+    <>
+    <IconRegistry icons={EvaIconsPack} />
     <ApplicationProvider {...eva} theme={eva.light}>
       <UserProvider>
         <AppContent />
       </UserProvider>
     </ApplicationProvider>
+    </>
   );
 };
 
