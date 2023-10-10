@@ -19,6 +19,7 @@
 ## install npm dependencies
 ```
 npm install
+npm install --prefix amplify/backend/function/ludiconfinal24f0f6bf1PreSignup/src
 ```
 
 ## run the app
