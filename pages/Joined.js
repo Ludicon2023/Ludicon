@@ -1,56 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Modal, Button, TextInput } from 'react-native';
+import React, { useState, useEffect} from 'react';
+import { View, Text, StyleSheet, FlatList, Modal, Button, TextInput, TouchableOpacity, Image } from 'react-native';
 import RenderItem from '../components/RenderItem';
-
+import { useUser } from '../contexts/UserContext'; 
+const USER_API = "https://shg8a5a6ob.execute-api.us-east-2.amazonaws.com/user";  
+const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 const Joined = () => {
-  const tableData = [
-    {
-      imageSource: require('../assets/zilker.png'),
-      distance: "5km",
-      title: "Basketball Game",
-      level: "Intermediate",
-      eventDate: "26th September",
-      address: "Park Lane 123",
-      peopleCount: "5/10",
-    },
-    {
-      imageSource: require('../assets/zilker.png'),
-      distance: "5km",
-      title: "Basketball Game",
-      level: "Intermediate",
-      eventDate: "26th September",
-      address: "Park Lane 123",
-      peopleCount: "5/10",
-    },
-    {
-      imageSource: require('../assets/zilker.png'),
-      distance: "5km",
-      title: "Basketball Game",
-      level: "Intermediate",
-      eventDate: "26th September",
-      address: "Park Lane 123",
-      peopleCount: "5/10",
-    },
-    {
-      imageSource: require('../assets/zilker.png'),
-      distance: "5km",
-      title: "Basketball Game",
-      level: "Intermediate",
-      eventDate: "26th September",
-      address: "Park Lane 123",
-      peopleCount: "5/10",
-    },
-    {
-      imageSource: require('../assets/zilker.png'),
-      distance: "5km",
-      title: "Basketball Game",
-      level: "Intermediate",
-      eventDate: "26th September",
-      address: "Park Lane 123",
-      peopleCount: "5/10",
-    }
-    
-  ];
+  const { user } = useUser();
+  const [username, setUsername] = useState('Unknown');
+  const [profile, setProfile] = useState({});
+  const [events, setEvents] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
   const [eventLocation, setEventLocation] = useState('');
@@ -61,19 +19,47 @@ const Joined = () => {
   const [gender, setGender] = useState('');
   const tableItemHeight = 207;
 
-  const openModal = () => {
-    setModalVisible(true);    
-  }
-  const closeModal = () => {
-    setModalVisible(false);
-  }
 
+  useEffect(() => {
+    if (user) {
+      const userId = user.attributes.email;
+
+      fetch(`${USER_API}/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          setProfile(data);
+          setUsername(data.Name);  
+          fetchEvents(data.Name);  
+        })
+        .catch(error => console.error('Error fetching profile:', error));
+    }
+}, [user]);
+  const fetchEvents = async (usernameParam) => {
+    try {
+      const currentUsername = usernameParam || username; 
+      const response = await fetch(EVENT_API);
+      const allEvents = await response.json();
+      const userEvents = allEvents.filter(event => 
+        event.Attendees.includes(currentUsername) || event.Organizer === currentUsername
+      );
+      setEvents(userEvents);  
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const openModal = () => {
+      setModalVisible(true);    
+    }
+    const closeModal = () => {
+      setModalVisible(false);
+    }
   const createEvent = async () => {
     // Validation to ensure all fields are filled
     if (!eventTitle || !eventLocation || !eventDate || !maxCapacity || !sport) {
         alert('All fields are required!');
         return;
     }
+  
 
     const event = {
         ID: "",
@@ -81,21 +67,20 @@ const Joined = () => {
         Place: eventLocation,
         Description: "Sample description.",  // Hardcoded for now, user will be able to edit.
         Capacity: parseInt(maxCapacity, 10), 
-        Organizer: "User Context",  // EZ FIX 
-        Attendees: ["User Context"],  // Just user creator 
-        SkillLevel: skillLevel,  // Hardcoded
+        Organizer: username,  
+        Attendees: [username],  
+        SkillLevel: skillLevel, 
         Sport: sport,
         Gender: gender, 
         Picture: "someimage.jpg",  // Hardcoded Fix later
         ChatLink: "somelink.link",  // Hardcoded
         EventTime: eventDate,
-        CreationTime: new Date().toISOString(),  // Record the current time as the creation time
+        CreationTime: new Date().toISOString(), 
         Coordinates: "56.77,67.99"  // Hardcoded
     };
 
     try {
-        const url = 'https://cors-anywhere.herokuapp.com/https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event';
-        const response = await fetch(url, {
+        const response = await fetch(EVENT_API, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -105,8 +90,6 @@ const Joined = () => {
         
         const data = await response.json();
         console.log("Event created:", data);
-
-        // Close the modal and clear the input fields after successful event creation
         setModalVisible(false);
         setEventTitle('');
         setEventLocation('');
@@ -119,15 +102,35 @@ const Joined = () => {
 };
 
   return (
-      <View style={styles.container}>
+    <View style={styles.container}>
+    <View style={styles.titleContainer}>
+      <Text style={[styles.title, styles.titleContent]}>My Joined Games</Text>
+      
       <View style={styles.titleContainer}>
-        <Text style={[styles.title, styles.titleContent]}>My Joined Games</Text>
+      <TouchableOpacity onPress={() => fetchEvents(username)}> 
+            <Image 
+              source={require('../assets/refresh.png')} 
+              style={styles.refreshIcon}
+            />
+          </TouchableOpacity>
+        
         <Text style={[styles.title, styles.titleContent]} onPress={openModal}>+</Text>
       </View>
+    </View>
       <View style={styles.content}>
         <FlatList
-          data={tableData}
-          renderItem={({ item }) => <RenderItem {...item} />}
+          data={events} 
+          renderItem={({ item }) => (
+            <RenderItem 
+              imageSource={require('../assets/zilker.png')}  // Hardcoded for now
+              distance="5km"  // Hardcoded for now
+              title={item.Name}  
+              level={item.SkillLevel}  
+              eventDate={item.EventTime}  
+              address={item.Place}  
+              peopleCount="5/10"  // Hardcoded for now
+            />
+          )}
           ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
           getItemLayout={(_, index) => ({
             length: tableItemHeight,
@@ -244,6 +247,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingLeft: 8,
+  },
+  refreshIcon: {
+    width: 20, 
+    height: 20, 
+    marginRight: 15,
+    marginLeft: -20,
+    top: 20,
   },
 });
 
