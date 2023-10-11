@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { View, Text, StyleSheet, FlatList, Modal, Button, TextInput, TouchableOpacity, Image } from 'react-native';
 import RenderItem from '../components/RenderItem';
 import { useUser } from '../contexts/UserContext'; 
+//https://cors-anywhere.herokuapp.com/
 const USER_API = "https://shg8a5a6ob.execute-api.us-east-2.amazonaws.com/user";  
 const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 const Joined = () => {
@@ -18,6 +19,8 @@ const Joined = () => {
   const [skillLevel, setSkillLevel] = useState('');
   const [gender, setGender] = useState('');
   const tableItemHeight = 207;
+  const [isModalVisible, setIsModalVisible] = useState(false);  
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
 
   useEffect(() => {
@@ -59,8 +62,6 @@ const Joined = () => {
         alert('All fields are required!');
         return;
     }
-  
-
     const event = {
         ID: "",
         Name: eventTitle,
@@ -100,6 +101,60 @@ const Joined = () => {
         console.log(error);
     }
 };
+const confirmLeaveEvent = (event) => {
+  setSelectedEvent(event);
+  setIsModalVisible(true);
+};
+
+const leaveEvent = async () => {
+  if (selectedEvent.Organizer === username) {
+    // User is the organizer, delete the event
+    try {
+      const response = await fetch(`${EVENT_API}/${selectedEvent.ID}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        console.log("Event deleted:", selectedEvent.Name);
+      } else {
+        console.error("Failed to delete the event");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  } else {
+    // User is an attendee, leave the event
+    const updatedAttendees = selectedEvent.Attendees.filter(attendee => attendee !== username);
+    const updatedEvent = {
+        ...selectedEvent,
+        Attendees: updatedAttendees
+    };
+
+    try {
+        const response = await fetch(`${EVENT_API}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedEvent),
+        });
+
+        if (response.ok) {
+            console.log(username + " has left the event " + selectedEvent.Name);
+        } else {
+            console.error("Failed to leave the event");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+  setIsModalVisible(false);
+  fetchEvents(username);
+};
 
   return (
     <View style={styles.container}>
@@ -121,6 +176,7 @@ const Joined = () => {
         <FlatList
           data={events} 
           renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => confirmLeaveEvent(item)}>
             <RenderItem 
               imageSource={require('../assets/zilker.png')}  // Hardcoded for now
               distance="5km"  // Hardcoded for now
@@ -128,8 +184,10 @@ const Joined = () => {
               level={item.SkillLevel}  
               eventDate={item.EventTime}  
               address={item.Place}  
-              peopleCount="5/10"  // Hardcoded for now
+              peopleCount={`${item.Attendees.length}/${item.Capacity}`}
+              organizer={item.Organizer}
             />
+             </TouchableOpacity>
           )}
           ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
           getItemLayout={(_, index) => ({
@@ -189,6 +247,21 @@ const Joined = () => {
         </View>
       </View>
     </Modal>
+    {isModalVisible && (
+        <View style={styles.modalContainer}>
+          <Text>Are you sure you want to {selectedEvent && selectedEvent.Organizer === username ? 'delete' : 'leave'} this event?</Text>
+          <View style={styles.buttonContainer}>
+            <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
+            <View style={styles.cancelButton}>
+            <Button 
+                title={selectedEvent && selectedEvent.Organizer === username ? 'Delete Event' : 'Leave Event'} 
+                onPress={leaveEvent} 
+                color="red"
+              />
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -254,6 +327,25 @@ const styles = StyleSheet.create({
     marginRight: 15,
     marginLeft: -20,
     top: 20,
+  },
+  modalContainer: {
+    position: 'absolute',
+    top: '40%',  // Adjust as needed
+    left: '10%',  // Adjust as needed
+    width: '80%',  // Adjust as needed
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+  },
+  cancelButton: {
+    marginLeft: 10,  // Adjust as needed
   },
 });
 

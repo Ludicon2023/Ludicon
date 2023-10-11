@@ -9,6 +9,7 @@ const RenderItem = ({
   eventDate,
   address,
   peopleCount,
+  organizer,
 }) => {
   return (
     <View style={styles.container}>
@@ -17,6 +18,7 @@ const RenderItem = ({
         <Text style={styles.distanceText}>{distance}</Text>
         <Text style={styles.titleText}>{title}</Text>
         <Text style={styles.levelText}>{level}</Text>
+        <Text style={styles.organizerText}>{"Host: " + organizer}</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>{eventDate}</Text>
@@ -64,11 +66,19 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',  // Slight transparency to separate from image
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',  
   },
   infoText: {
     color: 'black',
     fontWeight: 'bold',
+  },
+  organizerText: { 
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 20,
+    position: 'absolute',
+    bottom: -40,
+    right: 10,
   },
 });
 
