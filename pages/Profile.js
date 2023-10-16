@@ -296,6 +296,7 @@ const EditProfileScreen = ({ navigation, profile, setProfile }) => {
           numberOfLines={4}
           value={bio}
           onChangeText={(text) => setBio(text)}
+          maxLength={600} // Setting the maximum length to 200 characters
         />
         <Datepicker
         style={{ marginBottom: 10 }}

@@ -12,6 +12,7 @@ const Joined = () => {
   const [events, setEvents] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
+  const [eventPicture, setEventPicture] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [eventDate, setEventDate] = useState('');
   const [maxCapacity, setMaxCapacity] = useState('');
@@ -58,7 +59,7 @@ const Joined = () => {
     }
   const createEvent = async () => {
     // Validation to ensure all fields are filled
-    if (!eventTitle || !eventLocation || !eventDate || !maxCapacity || !sport) {
+    if (!eventTitle || !eventPicture ||!eventLocation || !eventDate || !maxCapacity || !sport) {
         alert('All fields are required!');
         return;
     }
@@ -73,7 +74,7 @@ const Joined = () => {
         SkillLevel: skillLevel, 
         Sport: sport,
         Gender: gender, 
-        Picture: "someimage.jpg",  // Hardcoded Fix later
+        Picture: eventPicture,  
         ChatLink: "somelink.link",  // Hardcoded
         EventTime: eventDate,
         CreationTime: new Date().toISOString(), 
@@ -93,6 +94,7 @@ const Joined = () => {
         console.log("Event created:", data);
         setModalVisible(false);
         setEventTitle('');
+        setEventPicture('');
         setEventLocation('');
         setEventDate('');
         setMaxCapacity('');
@@ -178,7 +180,7 @@ const leaveEvent = async () => {
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => confirmLeaveEvent(item)}>
             <RenderItem 
-              imageSource={require('../assets/zilker.png')}  // Hardcoded for now
+              imageSource={item.Picture}  // Hardcoded for now
               distance="5km"  // Hardcoded for now
               title={item.Name}  
               level={item.SkillLevel}  
@@ -216,6 +218,11 @@ const leaveEvent = async () => {
             placeholder="Event Location" 
             value={eventLocation}
             onChangeText={setEventLocation}
+          />
+          <TextInput 
+            placeholder="Picture" 
+            value={eventPicture}
+            onChangeText={setEventPicture}
           />
           <TextInput 
             placeholder="Event Date"

@@ -13,7 +13,7 @@ const RenderItem = ({
 }) => {
   return (
     <View style={styles.container}>
-      <Image source={imageSource} style={styles.image} />
+      <Image source={{uri: imageSource}} style={styles.image} />
       <View style={styles.textOverlay}>
         <Text style={styles.distanceText}>{distance}</Text>
         <Text style={styles.titleText}>{title}</Text>

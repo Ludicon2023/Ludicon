@@ -99,7 +99,7 @@ const Find = () => {
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => confirmJoinEvent(item)}>
             <RenderItem 
-              imageSource={require('../assets/zilker.png')}  // Hardcoded for now
+              imageSource={item.Picture}  // Hardcoded for now
               distance="5km"  // Hardcoded for now
               title={item.Name}  
               level={item.SkillLevel}  
