@@ -1,26 +1,36 @@
 import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
 const IndividualMessageComponent = ({ message, user, event, sent }) => {
   const messageStyle = {
-    backgroundColor: sent ? '#DCF8C6' : '#EDEDED',
-    borderRadius: '12px',
-    padding: '12px',
-    marginBottom: '10px',
-    maxWidth: '70%',
-    alignSelf: sent ? 'flex-end' : 'flex-start',
+    backgroundColor: '#DCF8C6',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+    maxWidth: '80%',
+    alignSelf: 'flex-start', // Always display as received message
   };
 
   const userStyle = {
     fontWeight: 'bold',
-    marginBottom: '6px',
+    marginBottom: 6,
   };
 
   return (
-    <div style={messageStyle}>
-      <div style={userStyle}>{user} - {event}</div>
-      <div>{message}</div>
-    </div>
+    <View style={[styles.messageContainer, messageStyle]}>
+      <Text style={userStyle}>{user}</Text>
+      <Text>{message}</Text>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  messageContainer: {
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+    maxWidth: '80%',
+  },
+});
 
 export default IndividualMessageComponent;
