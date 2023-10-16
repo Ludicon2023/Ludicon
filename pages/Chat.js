@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Modal, Button, TextInput } from 'react-native';
-import ChatComponent from '../components/ChatComponent';  
-import IndividualMessageComponent from '../components/IndividualMessageComponent'; 
+import ChatComponent from '../components/ChatComponent';
+import IndividualMessageComponent from '../components/IndividualMessageComponent';
 
 const Chat = () => {
   const events = [
@@ -10,10 +10,8 @@ const Chat = () => {
     // Add more events as needed
   ];
 
-  // Define the state and functions for the modal
   const [modalVisible, setModalVisible] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
-  // ... (other state variables)
 
   const openModal = () => {
     setModalVisible(true);
@@ -24,10 +22,7 @@ const Chat = () => {
   };
 
   const createEvent = async () => {
-    // ... (your createEvent function)
-
     try {
-      // ... (your fetch and event creation logic)
     } catch (error) {
       console.log(error);
     }
@@ -42,7 +37,7 @@ const Chat = () => {
       <View style={styles.content}>
         <FlatList
           data={events}
-          renderItem={({ item }) => <ChatComponent event={item} />}  // Use your ChatComponent
+          renderItem={({ item }) => <ChatComponent event={item} />}
           ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
           contentContainerStyle={{ paddingHorizontal: 25, paddingTop: 25, paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
@@ -56,14 +51,12 @@ const Chat = () => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            {/* ... (your modal content) */}
             <TextInput
               placeholder="Event Title"
               value={eventTitle}
               onChangeText={setEventTitle}
               style={styles.input}
             />
-            {/* ... (other inputs) */}
             <Button title="Create Event" onPress={createEvent} />
             <Button title="Cancel" onPress={closeModal} />
           </View>
