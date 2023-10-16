@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import IndividualMessageComponent from './IndividualMessageComponent';
 
 const ChatComponent = ({ event }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isChatOpen) {
+      // Focus the message input when the chat popup is opened
+      inputRef.current.focus();
+    }
+  }, [isChatOpen]);
 
   const handleChatClick = () => {
     setIsChatOpen(!isChatOpen);
@@ -24,14 +33,17 @@ const ChatComponent = ({ event }) => {
   };
 
   return (
-    <div style={styles.container}>
-      <div onClick={handleChatClick} style={styles.eventName}>
-        {event.name}
-      </div>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableOpacity onPress={handleChatClick} style={styles.eventName}>
+        <Text>{event.name}</Text>
+      </TouchableOpacity>
 
       {isChatOpen && (
-        <div style={styles.popup}>
-          <div style={styles.messageContainer}>
+        <View style={styles.popup}>
+          <ScrollView style={styles.messageContainer}>
             {messages.map((msg, index) => (
               <IndividualMessageComponent
                 key={index}
@@ -41,64 +53,57 @@ const ChatComponent = ({ event }) => {
                 sent={msg.sent}
               />
             ))}
-          </div>
-          <div style={styles.inputContainer}>
-            <input
-              type="text"
+          </ScrollView>
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={inputRef}
               placeholder="Type your message..."
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChangeText={(text) => setMessage(text)}
               style={styles.input}
             />
-            <button onClick={handleSendMessage}>Send</button>
-          </div>
-        </div>
+            <TouchableOpacity onPress={handleSendMessage}>
+              <Text>Send</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
-    </div>
+    </KeyboardAvoidingView>
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
-    border: '1px solid black',
-    padding: '10px',
-    margin: '10px',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    fontFamily: 'Arial, sans-serif', // Match the font used in Chat.js
+    flex: 1,
   },
   eventName: {
     fontWeight: 'bold',
-    cursor: 'pointer',
+    padding: 10,
+    borderBottomWidth: 1,
   },
   popup: {
-    position: 'fixed',
-    bottom: '10%',
-    left: '50%',
-    transform: 'translateX(-50%)',
+    flex: 1,
     backgroundColor: '#fff',
-    border: '2px solid #000',
-    padding: '20px',
-    borderRadius: '10px',
-    width: '80%',
-    maxWidth: '500px',
-    maxHeight: '70vh',
-    overflowY: 'auto',
-    zIndex: 9999,
+    padding: 20,
   },
   messageContainer: {
-    marginBottom: '10px',
+    flex: 1,
+    marginBottom: 10,
   },
   inputContainer: {
-    display: 'flex',
-    marginTop: '10px',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    paddingVertical: 10,
   },
   input: {
-    flex: '1',
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #ccc',
+    flex: 1,
+    padding: 10,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
-};
+});
 
 export default ChatComponent;
