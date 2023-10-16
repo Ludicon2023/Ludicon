@@ -1,0 +1,15 @@
+<div id="details"></div>
+<script>
+	// map.innerHTML = '<iframe width="700" height="300" src="https://maps.google.com/maps?q='+latitude+','+longitude+'&amp;z=15&amp;output=embed"></iframe>';
+
+navigator.geolocation.watchPosition(successCallback);
+
+function successCallback(position) {
+	const { accuracy, latitude, longitude, altitude, heading, speed } = position.coords;
+    // Show a map centered at latitude / longitude.
+    details.innerHTML = "Location Services <br>";
+    details.innerHTML += "Latitude: "+latitude+"<br>";
+	details.innerHTML += "Longitude: "+longitude;
+}
+
+</script>
