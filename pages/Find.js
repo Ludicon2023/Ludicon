@@ -64,12 +64,13 @@ const Find = () => {
     setIsModalVisible(true);
   };
 
-  const fetchEvents = async (username) => {
+  const fetchEvents = async (usernameParam) => {
     try {
+      const currentUsername = usernameParam || username;
       const response = await fetch(EVENT_API);
       const allEvents = await response.json();
       const availableEvents = allEvents.filter(event => 
-        !event.Attendees.includes(username) && event.Organizer !== username
+        !event.Attendees.includes(currentUsername) && event.Organizer !== currentUsername
       );
       setEvents(availableEvents); 
     } catch (error) {
@@ -80,9 +81,8 @@ const Find = () => {
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={[styles.title, styles.titleContent]}>Find Pickup Games</Text>
-        
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity onPress={fetchEvents}>
+          <TouchableOpacity onPress={() => fetchEvents(username)}>
             <Image 
               source={require('../assets/refresh.png')} 
               style={styles.refreshIcon}
