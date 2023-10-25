@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Modal, Button, TextInput } from 'react-native';
 import ChatComponent from '../components/ChatComponent';
 import IndividualMessageComponent from '../components/IndividualMessageComponent';
+import { useUser } from ".././contexts/UserContext";
 
 const Chat = () => {
+  const { user } = useUser();
+  console.log(user)
+
   const events = [
     { name: 'Event 1' },
     { name: 'Event 2' },

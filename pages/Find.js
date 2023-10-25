@@ -7,7 +7,6 @@ const USER_API = "https://shg8a5a6ob.execute-api.us-east-2.amazonaws.com/user";
 const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 const Find = () => {
   const { user } = useUser(); 
-  const [username, setUsername] = useState('Unknown');
   const [events, setEvents] = useState([]);
   const tableItemHeight = 207;
   const [isModalVisible, setIsModalVisible] = useState(false);  
@@ -15,22 +14,14 @@ const Find = () => {
 
   useEffect(() => {
     if (user) {
-      const userId = user.attributes.email;
-
-      fetch(`${USER_API}/${userId}`)
-        .then(response => response.json())
-        .then(data => {
-          setUsername(data.Name); 
-          fetchEvents(data.Name); 
-        })
-        .catch(error => console.error('Error fetching profile:', error));
+      fetchEvents(); 
     }
   }, [user]);
 
 
   const joinEvent = async () => {
     // User is joining the event, add the username to the attendees list
-    const updatedAttendees = [...selectedEvent.Attendees, username];
+    const updatedAttendees = [...selectedEvent.Attendees, user.attributes.email];
     const updatedEvent = {
         ...selectedEvent,
         Attendees: updatedAttendees
@@ -46,7 +37,7 @@ const Find = () => {
         });
 
         if (response.ok) {
-            console.log(username + " has joined the event " + selectedEvent.Name);
+            console.log(user.attributes.email + " has joined the event " + selectedEvent.Name);
         } else {
             console.error("Failed to join the event");
         }
@@ -55,7 +46,7 @@ const Find = () => {
     }
 
     setIsModalVisible(false);
-    fetchEvents(username);
+    fetchEvents();
 };
 
 
@@ -64,13 +55,12 @@ const Find = () => {
     setIsModalVisible(true);
   };
 
-  const fetchEvents = async (usernameParam) => {
+  const fetchEvents = async () => {
     try {
-      const currentUsername = usernameParam || username;
       const response = await fetch(EVENT_API);
       const allEvents = await response.json();
       const availableEvents = allEvents.filter(event => 
-        !event.Attendees.includes(currentUsername) && event.Organizer !== currentUsername
+        !event.Attendees.includes(user.attributes.email) && event.Organizer !== user.attributes.email
       );
       setEvents(availableEvents); 
     } catch (error) {
@@ -82,7 +72,7 @@ const Find = () => {
       <View style={styles.titleContainer}>
         <Text style={[styles.title, styles.titleContent]}>Find Pickup Games</Text>
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity onPress={() => fetchEvents(username)}>
+          <TouchableOpacity onPress={() => fetchEvents()}>
             <Image 
               source={require('../assets/refresh.png')} 
               style={styles.refreshIcon}

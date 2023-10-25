@@ -350,7 +350,6 @@ export default function Profile() {
       })
       .then((profile) => {
         setProfile(profile);
-        console.log(profile);
       })
       .catch((error) => {
         console.error("Error fetching user profile:", error);

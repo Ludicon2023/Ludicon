@@ -74,7 +74,7 @@ const AppContent = () => {
 
   const renderSignUp = () => (
     <View style={styles.container}>
-      <Image source={require('./assets/logo.png')} style={styles.image} />
+      <Image source={require('./assets/logo.png')} style={styles.image} resizeMode="contain" />
       <Text style={styles.title}>Create Your Account</Text>
       <TextInput
         style={styles.input}
