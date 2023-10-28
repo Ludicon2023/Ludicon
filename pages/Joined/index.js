@@ -11,8 +11,11 @@ import {
   Divider,
   Icon,
   Layout,
-  ListItem,
-  TopNavigation,
+  Modal,
+  Button,
+  Radio,
+  RadioGroup,
+  CheckBox,
   TopNavigationAction,
 } from "@ui-kitten/components";
 import RenderItem from "../../components/RenderItem";
@@ -27,6 +30,10 @@ const EVENT_API =
 
 const JoinedScreen = ({ navigation, profile }) => {
   const [events, setEvents] = useState([]);
+  const [sortOption, setSortOption] = useState("Name"); // Default sort option
+  const [filterOptions, setFilterOptions] = useState(["Show Full Games", "Show Male", "Show Female", "Show Mixed"]);  //Default filters
+  const [showModal, setShowModal] = useState(false);
+
   const { user } = useUser();
   useEffect(() => {
     fetchEvents();
@@ -41,11 +48,127 @@ const JoinedScreen = ({ navigation, profile }) => {
           event.Attendees.includes(user.attributes.email) ||
           event.Organizer === user.attributes.email
       );
-      setEvents(userEvents);
+      applyFiltersAndSort(userEvents)
     } catch (error) {
       console.log(error);
     }
   };
+
+  const applyFiltersAndSort = (events) => {
+    let filteredEvents = filterEvents(events, filterOptions);
+    let sortedEvents = applySorting(filteredEvents, sortOption);
+    setEvents(sortedEvents);
+    setShowModal(false); // Close modal after applying filters and sorting
+  };
+
+  const applySorting = (events, option) => {
+    if (option === "Name") {
+      return events.slice().sort((a, b) => a.Name.localeCompare(b.Name));
+    } else if (option === "Players") {
+      return events.slice().sort((a, b) => a.Attendees.length - b.Attendees.length);
+    }
+    return events;
+  };
+
+  const filterEvents = (events, filterOptions) => {
+    if (filterOptions.length === 0) {
+      return events; // If no filters are selected, return all events
+    }
+  
+    let filteredEvents = [...events]; // Create a copy of events array
+  
+    // If show Full Games is not selected filter out games with full capacity
+    if (!filterOptions.includes("Show Full Games")) {
+      filteredEvents = filteredEvents.filter(
+        (event) => event.Attendees.length < event.Capacity
+      );
+    }
+
+    if (!filterOptions.includes("Show Male")) {
+      filteredEvents = filteredEvents.filter(
+        (event) => event.Gender !== "Male"
+      );
+    }
+  
+    if (!filterOptions.includes("Show Female")) {
+      filteredEvents = filteredEvents.filter(
+        (event) => event.Gender !== "Female"
+      );
+    }
+  
+    if (!filterOptions.includes("Show Mixed")) {
+      filteredEvents = filteredEvents.filter(
+        (event) => event.Gender !== "Mixed"
+      );
+    }
+  
+  
+    // Add more filter conditions based on selected options
+    // For example:
+    // if (filterOptions.includes("OtherFilter")) {
+    //   filteredEvents = filteredEvents.filter(/* filter condition */);
+    // }
+  
+    return filteredEvents;
+  };
+  
+
+  const renderFilterModal = () => {
+    const sortOptions = ["Name", "Players"];
+    const availableFilterOptions = ["Show Full Games", "Show Male", "Show Female", "Show Mixed"];
+
+    const handleFilterSelection = (option) => {
+      // Check if the option is already selected
+      const isSelected = filterOptions.includes(option);
+
+      if (isSelected) {
+        // Deselect the option
+        const updatedFilters = filterOptions.filter((selected) => selected !== option);
+        setFilterOptions(updatedFilters);
+      } else {
+        // Select the option
+        setFilterOptions([...filterOptions, option]);
+      }
+    };
+
+    return (
+      <Modal
+        visible={showModal}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => setShowModal(false)}
+      >
+        <Layout style={{ padding: 16, borderRadius: 8, backgroundColor: 'white' }}>
+          <Text category='h6'>Sort By</Text>
+          <RadioGroup
+            selectedIndex={sortOptions.indexOf(sortOption)}
+            onChange={index => setSortOption(sortOptions[index])}
+          >
+            {sortOptions.map((option, index) => (
+              <Radio key={index}>{option}</Radio>
+            ))}
+          </RadioGroup>
+          
+          <Text category='h6' style={{ marginTop: 16 }}>Filters</Text>
+          <Layout>
+            {availableFilterOptions.map((option, index) => (
+              <CheckBox
+                key={index}
+                checked={filterOptions.includes(option)}
+                onChange={() => handleFilterSelection(option)}
+                style={{ margin: 4 }}
+              >
+                {option}
+              </CheckBox>
+            ))}
+          </Layout>
+
+          <Button onPress={() => fetchEvents()}>Apply</Button>
+        </Layout>
+      </Modal>
+    );
+  };
+
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -73,6 +196,10 @@ const JoinedScreen = ({ navigation, profile }) => {
           <TopNavigationAction
             icon={(props) => <Icon {...props} name="refresh-outline" />}
             onPress={() => fetchEvents()}
+          />
+          <TopNavigationAction
+            icon={(props) => <Icon {...props} name="options-2-outline" />}
+            onPress={() => setShowModal(true)} // Open filter modal
           />
         </View>
       </Layout>
@@ -104,6 +231,7 @@ const JoinedScreen = ({ navigation, profile }) => {
         />
       </View>
       <Divider style={{ margin: 60 }} />
+      {renderFilterModal()}
     </View>
   );
 };
