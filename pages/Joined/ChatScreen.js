@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, View, TouchableOpacity, TextInput, Button } from "react-native";
 import { useUser } from "../../contexts/UserContext";
 import { Text, Layout, Icon } from "@ui-kitten/components";
-import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore"; // Import onSnapshot
+import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import IndividualMessageBlueprint from './IndividualMessageBlueprint';
@@ -24,20 +24,17 @@ const ChatScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const { user } = useUser();
   const [chatMessages, setChatMessages] = useState([]);
-  const [messageInput, setMessageInput] = useState(""); // State to hold the user's input
+  const [messageInput, setMessageInput] = useState("");
 
   const handleSendMessage = async () => {
     if (user && messageInput) {
       const chatCollectionRef = collection(db, event.ID);
-
-      // Add a new document with "message," "displayedUser," and "hiddenUser" fields
       await addDoc(chatCollectionRef, {
         message: messageInput,
         displayedUser: user.attributes.name,
         hiddenUser: user.attributes.email,
       });
-
-      setMessageInput(""); // Clear the input field
+      setMessageInput("");
     }
   };
 
@@ -47,23 +44,23 @@ const ChatScreen = ({ route, navigation }) => {
       console.log("Email for user is. " + user.attributes.email);
       console.log("This is Event: " + event.ID);
 
-      // Query Firestore to find the documents in the collection
       const chatCollectionRef = collection(db, event.ID);
 
-      // Listen for changes to the collection and update the messages
       const unsubscribe = onSnapshot(chatCollectionRef, (querySnapshot) => {
         const messages = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          // Check if the user's email matches the hiddenUser field
+          const sender = user.attributes.email === data.hiddenUser;
           messages.push({
             displayedUser: data.displayedUser,
             message: data.message,
+            sender, // Pass the sender flag to the component
           });
         });
         setChatMessages(messages);
       });
 
-      // Clean up the listener when the component is unmounted
       return () => {
         unsubscribe();
       };
@@ -72,7 +69,6 @@ const ChatScreen = ({ route, navigation }) => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      {/* HEADER */}
       <Layout
         style={{
           padding: 10,
@@ -95,17 +91,16 @@ const ChatScreen = ({ route, navigation }) => {
         </View>
       </Layout>
 
-{/* Display chat messages */
-chatMessages.map((message, index) => (
-  <IndividualMessageBlueprint
-    key={index}
-    displayedUser={message.displayedUser}
-    message={message.message}
-  />
-))}
+      {/* Display chat messages */
+      chatMessages.map((message, index) => (
+        <IndividualMessageBlueprint
+          key={index}
+          displayedUser={message.displayedUser}
+          message={message.message}
+          sender={message.sender} // Pass the sender flag to the component
+        />
+      ))}
 
-
-      {/* Input field for user messages */}
       <View>
         <TextInput
           placeholder="Type your message here"
