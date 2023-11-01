@@ -1,15 +1,14 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Icon } from "@ui-kitten/components";
 
-const IndividualMessageBlueprint = ({ displayedUser, message }) => {
-  const isUserMessage = displayedUser;
+const IndividualMessageBlueprint = ({ displayedUser, message, sender }) => {
+  const isUserMessage = sender;
 
   return (
     <View
       style={{
         alignSelf: isUserMessage ? 'flex-end' : 'flex-start',
-        backgroundColor: isUserMessage ? '#007AFF' : '#E5E5EA', 
+        backgroundColor: isUserMessage ? '#007AFF' : '#34C759', // Blue for sender, green for receiver
         padding: 10,
         margin: 5,
         borderRadius: 10,
@@ -18,7 +17,7 @@ const IndividualMessageBlueprint = ({ displayedUser, message }) => {
     >
       <Text
         style={{
-          color: isUserMessage ? 'white' : 'black', 
+          color: isUserMessage ? 'white' : 'black',
           fontSize: 16,
         }}
       >
