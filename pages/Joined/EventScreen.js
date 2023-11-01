@@ -8,6 +8,7 @@ import {
   Icon
 } from "@ui-kitten/components";
 import { useUser } from "../../contexts/UserContext";
+import ChatScreen from "./ChatScreen";
 const EVENT_API =
   "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 
@@ -110,8 +111,18 @@ const EventScreen = ({ route, navigation }) => {
         {/* Add more event details as needed */}
       </Layout>
 
+      
+
       {/* Leave Event Button */}
-      <Layout style={{ padding: 16 }}>
+      <Layout style={{ padding: 16}}>
+      <Button
+          style={{marginBottom: 10}}
+          appearance="outline"
+          status="primary"
+          onPress={() => navigation.navigate("ChatScreen", {event: event})}
+        >
+            Chat
+        </Button>
         <Button
           appearance="outline"
           status="danger"

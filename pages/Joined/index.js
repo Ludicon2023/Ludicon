@@ -25,6 +25,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import EventScreen from "./EventScreen";
 import CreateEventScreen from "./CreateEventScreen";
+import ChatScreen from "./ChatScreen";
 const EVENT_API =
   "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 
@@ -250,6 +251,9 @@ export default function Joined() {
         </JoinedPageStack.Screen>
         <JoinedPageStack.Screen name="EventScreen">
           {(props) => <EventScreen {...props} />}
+        </JoinedPageStack.Screen>
+        <JoinedPageStack.Screen name="ChatScreen">
+          {(props) => <ChatScreen {...props} />}
         </JoinedPageStack.Screen>
         <JoinedPageStack.Screen name="CreateEventScreen">
           {(props) => <CreateEventScreen {...props} />}

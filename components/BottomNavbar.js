@@ -22,14 +22,14 @@ const BottomNavbar = ({ currentPage, handleNavigation }) => {
         </View>
         <Text style={styles.navbarItemText}>Find</Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* {<TouchableOpacity
         style={[styles.navbarItem, currentPage === 'Chat' && styles.navbarItemSelected]}
         onPress={() => handleNavigation('Chat')}>
           <View style={styles.iconContainer}>
           <Image source={require('../assets/message-icon.png')} style={styles.icon} />
         </View>
         <Text style={styles.navbarItemText}>Chat</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>} */}
       <TouchableOpacity
         style={[styles.navbarItem, currentPage === 'Profile' && styles.navbarItemSelected]}
         onPress={() => handleNavigation('Profile')}>

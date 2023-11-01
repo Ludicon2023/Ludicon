@@ -21,8 +21,8 @@ const Dashboard = () => {
         );
       case "Find":
         return <Find />;
-      case "Chat":
-        return <Chat />;
+      // case "Chat":
+      //     return <Chat />;    
       case "Profile":
         return (
             <Profile />

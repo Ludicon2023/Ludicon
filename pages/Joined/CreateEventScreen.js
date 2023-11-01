@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { View, ScrollView, TouchableOpacity } from "react-native";
 import {
   Text,
@@ -14,9 +17,20 @@ import { useUser } from "../../contexts/UserContext";
 
 const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyC5SCmPDmgj1_mXaMCanGe-zu5E7lKa6Ac",
+  authDomain: "ludicon-e292d.firebaseapp.com",
+  projectId: "ludicon-e292d",
+  storageBucket: "ludicon-e292d.appspot.com",
+  messagingSenderId: "1026436891213",
+  appId: "1:1026436891213:web:e8f3499b66578dadc7d204",
+  measurementId: "G-7XPQY8SNQL"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const CreateEventScreen = ({ navigation }) => {
   const { user } = useUser();
-
+  const [eventID, setEventID] = useState("");
   const [eventTitle, setEventTitle] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventPicture, setEventPicture] = useState("");
@@ -58,6 +72,11 @@ const CreateEventScreen = ({ navigation }) => {
       CreationTime: new Date().toISOString(),
       Coordinates: "56.77,67.99", // Hardcoded
     };
+    const welcomeMessage = {
+      displayedUser: user.attributes.name,
+      hiddenUser: user.attributes.email,
+      message: `Welcome to the chat for the ${eventTitle} event!`,
+    };
 
     try {
       const response = await fetch(EVENT_API, {
@@ -69,6 +88,12 @@ const CreateEventScreen = ({ navigation }) => {
       });
 
       if (response.ok) {
+        const responseData = await response.json();
+        console.log("Created event with ID: " + responseData);    
+        setEventID(responseData);
+        const eventCollection = collection(db, responseData);
+        const welcomeMessageDocRef = doc(eventCollection, 'welcomeMessage');
+        await setDoc(welcomeMessageDocRef, welcomeMessage);
         console.log("Event created:", event);
         // Clear input fields
         setEventTitle("");
