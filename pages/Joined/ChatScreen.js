@@ -5,6 +5,8 @@ import { Text, Layout, Icon } from "@ui-kitten/components";
 import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 import IndividualMessageBlueprint from './IndividualMessageBlueprint';
 
 const firebaseConfig = {
@@ -27,12 +29,14 @@ const ChatScreen = ({ route, navigation }) => {
   const [messageInput, setMessageInput] = useState("");
 
   const handleSendMessage = async () => {
+    console.log("send")
     if (user && messageInput) {
       const chatCollectionRef = collection(db, event.ID);
       await addDoc(chatCollectionRef, {
         message: messageInput,
         displayedUser: user.attributes.name,
         hiddenUser: user.attributes.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
       setMessageInput("");
     }
@@ -45,7 +49,6 @@ const ChatScreen = ({ route, navigation }) => {
       console.log("This is Event: " + event.ID);
 
       const chatCollectionRef = collection(db, event.ID);
-
       const unsubscribe = onSnapshot(chatCollectionRef, (querySnapshot) => {
         const messages = [];
         querySnapshot.forEach((doc) => {
@@ -56,6 +59,7 @@ const ChatScreen = ({ route, navigation }) => {
             displayedUser: data.displayedUser,
             message: data.message,
             sender, // Pass the sender flag to the component
+            createdAt: data.createdAt
           });
         });
         setChatMessages(messages);
@@ -91,15 +95,18 @@ const ChatScreen = ({ route, navigation }) => {
         </View>
       </Layout>
 
-      {/* Display chat messages */
-      chatMessages.map((message, index) => (
-        <IndividualMessageBlueprint
-          key={index}
-          displayedUser={message.displayedUser}
-          message={message.message}
-          sender={message.sender} // Pass the sender flag to the component
-        />
-      ))}
+    {/* Display chat messages in descending order by createdAt timestamp */
+chatMessages.filter(message => message.createdAt)
+.sort((a, b) => a.createdAt - b.createdAt)
+.map((message, index) => (
+  <IndividualMessageBlueprint
+    key={index}
+    displayedUser={message.displayedUser}
+    message={message.message}
+    sender={message.sender} // Pass the sender flag to the component
+  />
+))
+}
 
       <View>
         <TextInput
