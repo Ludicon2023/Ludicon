@@ -12,6 +12,7 @@ import ChatScreen from "./ChatScreen";
 const EVENT_API =
   "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 
+import Header from "../../components/Header";
   
 const EventScreen = ({ route, navigation }) => {
   const { event } = route.params;
@@ -67,28 +68,12 @@ const EventScreen = ({ route, navigation }) => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      {/* HEADER */}
-      <Layout
-        style={{
-          padding: 10,
-          paddingTop: 36,
-          backgroundColor: "#AAFFA7",
-          borderRadius: 8,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back-outline" width={32} height={32} />
-          </TouchableOpacity>
-          <Text category="h4">{event.Name}</Text>
-        </View>
-      </Layout>
+    
+      <Header
+        title={event.Name}
+        showBackButton={true}
+        onBackPress={() => navigation.goBack()}
+      />
 
       {/* Event Picture */}
       <Image

@@ -23,6 +23,7 @@ import { useUser } from "../../contexts/UserContext";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
+import Header from "../../components/Header";
 import EventScreen from "./EventScreen";
 import CreateEventScreen from "./CreateEventScreen";
 import ChatScreen from "./ChatScreen";
@@ -32,7 +33,12 @@ const EVENT_API =
 const JoinedScreen = ({ navigation, profile }) => {
   const [events, setEvents] = useState([]);
   const [sortOption, setSortOption] = useState("Name"); // Default sort option
-  const [filterOptions, setFilterOptions] = useState(["Show Full Games", "Show Male", "Show Female", "Show Mixed"]);  //Default filters
+  const [filterOptions, setFilterOptions] = useState([
+    "Show Full Games",
+    "Show Male",
+    "Show Female",
+    "Show Mixed",
+  ]); //Default filters
   const [showModal, setShowModal] = useState(false);
 
   const { user } = useUser();
@@ -49,7 +55,7 @@ const JoinedScreen = ({ navigation, profile }) => {
           event.Attendees.includes(user.attributes.email) ||
           event.Organizer === user.attributes.email
       );
-      applyFiltersAndSort(userEvents)
+      applyFiltersAndSort(userEvents);
     } catch (error) {
       console.log(error);
     }
@@ -66,7 +72,9 @@ const JoinedScreen = ({ navigation, profile }) => {
     if (option === "Name") {
       return events.slice().sort((a, b) => a.Name.localeCompare(b.Name));
     } else if (option === "Players") {
-      return events.slice().sort((a, b) => a.Attendees.length - b.Attendees.length);
+      return events
+        .slice()
+        .sort((a, b) => a.Attendees.length - b.Attendees.length);
     }
     return events;
   };
@@ -75,9 +83,9 @@ const JoinedScreen = ({ navigation, profile }) => {
     if (filterOptions.length === 0) {
       return events; // If no filters are selected, return all events
     }
-  
+
     let filteredEvents = [...events]; // Create a copy of events array
-  
+
     // If show Full Games is not selected filter out games with full capacity
     if (!filterOptions.includes("Show Full Games")) {
       filteredEvents = filteredEvents.filter(
@@ -90,33 +98,36 @@ const JoinedScreen = ({ navigation, profile }) => {
         (event) => event.Gender !== "Male"
       );
     }
-  
+
     if (!filterOptions.includes("Show Female")) {
       filteredEvents = filteredEvents.filter(
         (event) => event.Gender !== "Female"
       );
     }
-  
+
     if (!filterOptions.includes("Show Mixed")) {
       filteredEvents = filteredEvents.filter(
         (event) => event.Gender !== "Mixed"
       );
     }
-  
-  
+
     // Add more filter conditions based on selected options
     // For example:
     // if (filterOptions.includes("OtherFilter")) {
     //   filteredEvents = filteredEvents.filter(/* filter condition */);
     // }
-  
+
     return filteredEvents;
   };
-  
 
   const renderFilterModal = () => {
     const sortOptions = ["Name", "Players"];
-    const availableFilterOptions = ["Show Full Games", "Show Male", "Show Female", "Show Mixed"];
+    const availableFilterOptions = [
+      "Show Full Games",
+      "Show Male",
+      "Show Female",
+      "Show Mixed",
+    ];
 
     const handleFilterSelection = (option) => {
       // Check if the option is already selected
@@ -124,7 +135,9 @@ const JoinedScreen = ({ navigation, profile }) => {
 
       if (isSelected) {
         // Deselect the option
-        const updatedFilters = filterOptions.filter((selected) => selected !== option);
+        const updatedFilters = filterOptions.filter(
+          (selected) => selected !== option
+        );
         setFilterOptions(updatedFilters);
       } else {
         // Select the option
@@ -135,21 +148,25 @@ const JoinedScreen = ({ navigation, profile }) => {
     return (
       <Modal
         visible={showModal}
-        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         onBackdropPress={() => setShowModal(false)}
       >
-        <Layout style={{ padding: 16, borderRadius: 8, backgroundColor: 'white' }}>
-          <Text category='h6'>Sort By</Text>
+        <Layout
+          style={{ padding: 16, borderRadius: 8, backgroundColor: "white" }}
+        >
+          <Text category="h6">Sort By</Text>
           <RadioGroup
             selectedIndex={sortOptions.indexOf(sortOption)}
-            onChange={index => setSortOption(sortOptions[index])}
+            onChange={(index) => setSortOption(sortOptions[index])}
           >
             {sortOptions.map((option, index) => (
               <Radio key={index}>{option}</Radio>
             ))}
           </RadioGroup>
-          
-          <Text category='h6' style={{ marginTop: 16 }}>Filters</Text>
+
+          <Text category="h6" style={{ marginTop: 16 }}>
+            Filters
+          </Text>
           <Layout>
             {availableFilterOptions.map((option, index) => (
               <CheckBox
@@ -169,41 +186,46 @@ const JoinedScreen = ({ navigation, profile }) => {
     );
   };
 
-
-
   return (
     <View style={{ flex: 1 }}>
-      {/* HEADER */}
-      <Layout
-        style={{
-          padding: 10,
-          paddingTop: 36,
-          backgroundColor: "#AAFFA7",
-          borderRadius: 8,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text category="h4">My Joined Events</Text>
-          <TopNavigationAction
-            icon={(props) => <Icon {...props} name="plus-outline" />}
-            onPress={() => navigation.navigate("CreateEventScreen")}
-          />
-          <TopNavigationAction
-            icon={(props) => <Icon {...props} name="refresh-outline" />}
-            onPress={() => fetchEvents()}
-          />
-          <TopNavigationAction
-            icon={(props) => <Icon {...props} name="options-2-outline" />}
-            onPress={() => setShowModal(true)} // Open filter modal
-          />
-        </View>
-      </Layout>
+      {/* Custom Header */}
+      <Header
+        title="My Joined Events"
+        accessoryButtons={
+          <>
+            <TopNavigationAction
+              icon={(props) => (
+                <Icon
+                  {...props}
+                  name="plus-outline"
+                  style={{ width: 30, height: 30, marginRight: 6}}
+                />
+              )}
+              onPress={() => navigation.navigate("CreateEventScreen")}
+            />
+            <TopNavigationAction
+              icon={(props) => (
+                <Icon
+                  {...props}
+                  name="refresh-outline"
+                  style={{ width: 30, height: 30, marginRight: 6 }}
+                />
+              )}
+              onPress={fetchEvents}
+            />
+            <TopNavigationAction
+              icon={(props) => (
+                <Icon
+                  {...props}
+                  name="options-2-outline"
+                  style={{ width: 30, height: 30 }}
+                />
+              )}
+              onPress={() => setShowModal(true)}
+            />
+          </>
+        }
+      />
 
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <FlatList

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Icon } from '@ui-kitten/components';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Button } from 'react-native';
 import RenderItem from '../components/RenderItem';  
 import { useUser } from '../contexts/UserContext';  
+import Header from '../components/Header';
 //https://cors-anywhere.herokuapp.com/
 const USER_API = "https://shg8a5a6ob.execute-api.us-east-2.amazonaws.com/user";  
 const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
@@ -69,47 +71,46 @@ const Find = () => {
   };
   return (
     <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={[styles.title, styles.titleContent]}>Find Pickup Games</Text>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity onPress={() => fetchEvents()}>
-            <Image 
-              source={require('../assets/refresh.png')} 
-              style={styles.refreshIcon}
-            />
-          </TouchableOpacity>
-          
-          <Image source={require('../assets/search-icon.png')} style={[styles.image, styles.titleContent]}/>
-        </View>
-      </View>
+      <Header
+        title="Find Pickup Games"
+        showBackButton={false}
+        accessoryButtons={(
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={fetchEvents}>
+              <Icon name='refresh-outline' style={{ width: 30, height: 30, marginRight: 6 }} />
+            </TouchableOpacity>
+            <Icon name='search' style={{ width: 30, height: 30, marginLeft: 10 }} />
+          </View>
+        )}
+      />
       
-      <View style={styles.content}>
+      <View style={{ flex: 1, backgroundColor: "white" }}>
         <FlatList
-          data={events} 
+          data={events}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => confirmJoinEvent(item)}>
-            <RenderItem 
-              imageSource={item.Picture}  // Hardcoded for now
-              distance="5km"  // Hardcoded for now
-              title={item.Name}  
-              level={item.SkillLevel}  
-              eventDate={item.EventTime}  
-              address={item.Place}  
-              peopleCount={`${item.Attendees.length}/${item.Capacity}`}
-              organizer={item.Organizer} 
-            />
+            <TouchableOpacity
+              onPress={
+                () => confirmJoinEvent(item)
+              }
+            >
+              <RenderItem
+                imageSource={item.Picture}
+                distance="5km"
+                title={item.Name}
+                level={item.SkillLevel}
+                eventDate={item.EventTime}
+                address={item.Place}
+                peopleCount={`${item.Attendees.length}/${item.Capacity}`}
+                organizer={item.Organizer}
+              />
             </TouchableOpacity>
           )}
           ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
-          getItemLayout={(_, index) => ({
-            length: tableItemHeight,
-            offset: (tableItemHeight + 25) * index,
-            index,
-          })}
-          contentContainerStyle={{ paddingHorizontal: 25, paddingTop: 25, paddingBottom: 100 }}
-          showsVerticalScrollIndicator={false}
+          keyExtractor={(item) => item.ID}
+          contentContainerStyle={{ padding: 16 }}
         />
       </View>
+
       {isModalVisible && (
         <View style={styles.modalContainer}>
           <Text>Would you like to join this event?</Text>
@@ -162,8 +163,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 0.88,
-    borderTopWidth: 3,
-    borderColor: 'black',
     backgroundColor: 'white',
   },
   title: {

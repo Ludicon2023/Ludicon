@@ -14,7 +14,7 @@ import {
   Datepicker
 } from "@ui-kitten/components";
 import { useUser } from "../../contexts/UserContext";
-
+import Header from "../../components/Header";
 const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 
 const firebaseConfig = {
@@ -114,27 +114,13 @@ const CreateEventScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <Layout
-        style={{
-          padding: 10,
-          paddingTop: 36,
-          backgroundColor: "#AAFFA7",
-          borderRadius: 8,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back-outline" width={32} height={32} />
-          </TouchableOpacity>
-          <Text category="h4">Create New Event</Text>
-        </View>
-      </Layout>
+    
+      <Header
+        title="Create New Event"
+        showBackButton={true}
+        onBackPress={() => navigation.goBack()}
+      />
+
 
       <Layout style={{ margin: 2 }}>
         <Input

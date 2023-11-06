@@ -23,31 +23,7 @@ const Stack = createStackNavigator();
 const API_URL = "https://shg8a5a6ob.execute-api.us-east-2.amazonaws.com/user";
 const sportsData = ["Football", "Basketball", "Tennis"];
 
-const Header = ({ navigation }) => {
-  return (
-    <Layout
-      style={{
-        padding: 10,
-        paddingTop: 36,
-        backgroundColor: "#AAFFA7",
-        borderRadius: 8,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Text category="h4">My Profile</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
-          <Avatar source={require("../assets/Vector.png")} size="small" />
-        </TouchableOpacity>
-      </View>
-    </Layout>
-  );
-};
+import Header from "../components/Header";
 
 const Bio = ({ navigation, profile }) => {
   const dobTimestamp = profile.DOB ? parseInt(profile.DOB) : null; // Parse DOB if it's not empty
@@ -132,7 +108,17 @@ const SportsList = () => {
 const ProfileScreen = ({ navigation, profile }) => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <Header navigation={navigation} profile={profile} />
+      <Header
+        title="My Profile"
+        showBackButton={false}
+        accessoryButtons={(
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+              <Icon name='settings-2-outline' style={{ width: 30, height: 30, marginLeft: 10 }} />
+            </TouchableOpacity>
+          </View>
+        )}
+      />
       <Bio navigation={navigation} profile={profile} />
       <BioCard profile={profile} />
       {/* <SportsList profile={profile} /> */}
@@ -149,27 +135,12 @@ const SettingsScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <Layout
-        style={{
-          padding: 10,
-          paddingTop: 36,
-          backgroundColor: "#AAFFA7",
-          borderRadius: 8,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back-outline" width={32} height={32} />
-          </TouchableOpacity>
-          <Text category="h4">Settings</Text>
-        </View>
-      </Layout>
+    
+      <Header
+        title="Settings"
+        showBackButton={true}
+        onBackPress={() => navigation.goBack()}
+      />
 
       {/* Add your settings content here */}
 
@@ -248,30 +219,20 @@ const EditProfileScreen = ({ navigation, profile, setProfile }) => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <Layout
-        style={{
-          padding: 10,
-          paddingTop: 36,
-          backgroundColor: "#AAFFA7",
-          borderRadius: 8,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back-outline" width={32} height={32} />
-          </TouchableOpacity>
-          <Text category="h4">Edit Profile</Text>
-          <TouchableOpacity onPress={handleSaveProfile}>
+
+      <Header
+        title="Edit Profile"
+        showBackButton={true}
+        onBackPress={() => navigation.goBack()}
+        accessoryButtons={(
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={handleSaveProfile}>
             <Text category="h6">Save</Text>
-          </TouchableOpacity>
-        </View>
-      </Layout>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+
 
       <Layout style={{ margin: 16 }}>
         <Input
