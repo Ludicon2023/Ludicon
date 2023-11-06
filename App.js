@@ -14,11 +14,24 @@ import awsconfig from './src/aws-exports';
 import Dashboard from './Dashboard';
 Amplify.configure(awsconfig);
 
+const customTheme = {
+  ...eva.light,
+  'color-primary-100': '#E6F4EA',
+  'color-primary-200': '#B3E0C5',
+  'color-primary-300': '#80CC9F',
+  'color-primary-400': '#4DB87A',
+  'color-primary-500': '#00AA55', 
+  'color-primary-600': '#008844',
+  'color-primary-700': '#006633',
+  'color-primary-800': '#004422',
+  'color-primary-900': '#002211',
+};
+
 const App = () => {
   return (
     <>
     <IconRegistry icons={EvaIconsPack} />
-    <ApplicationProvider {...eva} theme={eva.light}>
+    <ApplicationProvider {...eva} theme={{ ...customTheme }}>
       <UserProvider>
         <AppContent />
       </UserProvider>

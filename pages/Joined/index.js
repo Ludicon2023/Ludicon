@@ -231,7 +231,6 @@ const JoinedScreen = ({ navigation, profile }) => {
           contentContainerStyle={{ padding: 16 }}
         />
       </View>
-      <Divider style={{ margin: 60 }} />
       {renderFilterModal()}
     </View>
   );
