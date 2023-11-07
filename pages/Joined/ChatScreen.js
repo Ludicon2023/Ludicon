@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Icon, Input } from "@ui-kitten/components"; // Import UI Kitten components
 
@@ -23,12 +23,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const ChatScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const { user } = useUser();
   const [chatMessages, setChatMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
+  const scrollViewRef = useRef(); // Create a ref for the ScrollView
 
   const handleSendMessage = async () => {
     console.log("send");
@@ -73,6 +73,16 @@ const ChatScreen = ({ route, navigation }) => {
     }
   }, [user, event.ID]);
 
+  const scrollToBottom = () => {
+    // Scroll to the end of the chat when content size changes
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
+
   return (
     <View style={{ flex: 1 }}>
       <Header
@@ -81,7 +91,12 @@ const ChatScreen = ({ route, navigation }) => {
         onBackPress={() => navigation.goBack()}
       />
 
-      <ScrollView style={{ flex: 1, margin: 10 }}>
+<ScrollView
+        ref={scrollViewRef} // Attach the ref to the ScrollView
+        onContentSizeChange={scrollToBottom} // Scroll to the end when content size changes
+        style={{ flex: 1, margin: 10 }}
+      >
+        
         {chatMessages
           .filter((message) => message.createdAt)
           .sort((a, b) => a.createdAt - b.createdAt)
@@ -94,9 +109,8 @@ const ChatScreen = ({ route, navigation }) => {
             />
           ))}
         {/* Spacer after the last message */}
-        <View style={{ height: 120 }} />
+        <View style={{ height: 60 }} />
       </ScrollView>
-
       <View
         style={{
           position: "flex",
