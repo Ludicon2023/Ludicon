@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
-import {
-  ScrollView,
-  View,
-  TouchableOpacity,
-  TextInput,
-  Button,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, View } from "react-native";
+import { Icon, Input } from "@ui-kitten/components"; // Import UI Kitten components
+
 import { useUser } from "../../contexts/UserContext";
-import { Text, Layout, Icon } from "@ui-kitten/components";
 import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
@@ -79,17 +74,15 @@ const ChatScreen = ({ route, navigation }) => {
   }, [user, event.ID]);
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      
+    <View style={{ flex: 1 }}>
       <Header
         title={"Chat: " + event.Name}
         showBackButton={true}
         onBackPress={() => navigation.goBack()}
       />
 
-      {
-        /* Display chat messages in descending order by createdAt timestamp */
-        chatMessages
+      <ScrollView style={{ flex: 1, margin: 10 }}>
+        {chatMessages
           .filter((message) => message.createdAt)
           .sort((a, b) => a.createdAt - b.createdAt)
           .map((message, index) => (
@@ -97,20 +90,49 @@ const ChatScreen = ({ route, navigation }) => {
               key={index}
               displayedUser={message.displayedUser}
               message={message.message}
-              sender={message.sender} // Pass the sender flag to the component
+              sender={message.sender}
             />
-          ))
-      }
+          ))}
+        {/* Spacer after the last message */}
+        <View style={{ height: 120 }} />
+      </ScrollView>
 
-      <View>
-        <TextInput
+      <View
+        style={{
+          position: "flex",
+          bottom: 58, // Adjust this value as needed
+          left: 0,
+          right: 0,
+          padding: 10,
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "#f2f2f2", // Light gray background color
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderTopWidth: 1,
+          borderTopColor: "lightgray",
+        }}
+      >
+        <Input
+          style={{
+            flex: 1,
+            borderRadius: 20, // To match the border radius of the container
+            paddingLeft: 15, // Padding for text inside the input
+            marginRight: 10,
+          }}
           placeholder="Type your message here"
           value={messageInput}
           onChangeText={(text) => setMessageInput(text)}
         />
-        <Button title="Send" onPress={handleSendMessage} />
+        <Icon
+          name="paper-plane" // Adjust the name to the desired UI Kitten icon
+          width={30}
+          height={30}
+          fill="#8F9BB3" // Icon color
+          onPress={handleSendMessage} // Handle the onPress event for sending the message
+        />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
