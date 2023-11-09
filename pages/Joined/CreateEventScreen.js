@@ -43,7 +43,7 @@ const CreateEventScreen = ({ navigation }) => {
   const [skillLevel, setSkillLevel] = useState("Beginner");
   const [gender, setGender] = useState("Mixed");
 
-  const [autoGeneratePicture, setAutoGeneratePicture] = useState(false);
+  const [autoGeneratePicture, setAutoGeneratePicture] = useState(true);
 
   const today = new Date();
   const handleEventPictureChange = (text) => {
@@ -202,7 +202,7 @@ const CreateEventScreen = ({ navigation }) => {
       ID: "", // Generate a unique ID for the event
       Name: eventTitle,
       Place: eventLocation,
-      Description: "Sample description.", // TODO: Add multiline text input
+      Description: eventDescription, // TODO: Add multiline text input
       Capacity: parseInt(maxCapacity, 10),
       Organizer: user.attributes.email,
       Attendees: [user.attributes.email],
@@ -211,7 +211,7 @@ const CreateEventScreen = ({ navigation }) => {
       Gender: gender,
       Picture: pictureUrl,
       ChatLink: "somelink.link", // Hardcoded
-      EventTime: eventDate,
+      EventTime: eventDate.toLocaleDateString(),
       CreationTime: new Date().toISOString(),
       Coordinates: "56.77,67.99", // Hardcoded
     };
