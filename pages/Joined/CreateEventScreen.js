@@ -42,10 +42,17 @@ const CreateEventScreen = ({ navigation }) => {
   const [sport, setSport] = useState("");
   const [skillLevel, setSkillLevel] = useState("Beginner");
   const [gender, setGender] = useState("Mixed");
-
+  const [filteredSports, setFilteredSports] = useState([]);
   const [autoGeneratePicture, setAutoGeneratePicture] = useState(true);
 
   const today = new Date();
+  const handleSportChange = (text) => {
+    setSport(text);
+    const filtered = validSports.filter((s) =>
+      s.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredSports(filtered);
+  };
   const handleEventPictureChange = (text) => {
     setEventPicture(text);
     if (text) {
@@ -275,8 +282,24 @@ const CreateEventScreen = ({ navigation }) => {
           placeholder="Sport"
           label="Sport"
           value={sport}
-          onChangeText={(text) => setSport(text)}
+          onChangeText={handleSportChange}
         />
+        {/* Display the filtered sports as suggestions */}
+        {filteredSports.length > 0 && (
+          <View>
+            {filteredSports.map((s) => (
+              <TouchableOpacity
+                key={s}
+                onPress={() => {
+                  setSport(s);
+                  setFilteredSports([]);
+                }}
+              >
+                <Text>{s}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
         <Input
         style={{ margin: 2 }}
           label="Event Description"
