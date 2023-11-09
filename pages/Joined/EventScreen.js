@@ -93,6 +93,7 @@ const EventScreen = ({ route, navigation }) => {
         <ListItem title={`Skill Level: ${event.SkillLevel}`} />
         <ListItem title={`Sport: ${event.Sport}`} />
         <ListItem title={`Gender: ${event.Gender}`} />
+         <ListItem title={`Pic url: ${event.Picture}`} />
         {/* Add more event details as needed */}
       </Layout>
 
