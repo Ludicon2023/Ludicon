@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getDistance } from 'geolib';
 import {
   View,
   ScrollView,
@@ -47,28 +48,38 @@ const JoinedScreen = ({ navigation, profile }) => {
   const [eventLat, setEventLat] = useState(null);
   const [eventLon, setEventLon] = useState(null);
   const { user } = useUser();
+  const hardcodeLat = 30.28809642898832;
+  const hardcodeLong = -97.73521176086915;
+  function createDistances(eventData) {
+    console.log("wafee2");
+    if(eventData){
+    // console.log("event data >>>>", eventData)
+     if(eventData.Coordinates){
+      const coordinateData = eventData.Coordinates.split(',')
+      console.log(coordinateData)
+      if(coordinateData){
+        console.log("coordinate info",coordinateData)
+        const distance = getDistance(
+          { latitude: hardcodeLat, longitude: hardcodeLong },
+          { latitude:parseFloat(coordinateData[0]), longitude: parseFloat(coordinateData[1]) },
+          );
+           console.log("distance value: ", distance * 0.000621371192)
+           var newd = distance * 0.000621371192;
+           newd = parseFloat(newd).toFixed(2);
+           newd = newd + " mi";
+           console.log(newd);
+           eventData.distance = newd;
+          // console.log("coordinate info >>>>", coordinateData)
+           return eventData
+      }
+     }
+    }
+    return eventData
+  }
   useEffect(() => {
     fetchEvents();
   }, [user]);
-useEffect(() => {
-    const getPermissions = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log("Please grant location permissions");
-        return;
-      }
 
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation);
-      'ACCESS_FINE_LOCATION'
-      setUserLat(currentLocation.coords.latitude);
-      setUserLon(currentLocation.coords.longitude);
-    const { longitude } = currentLocation.coords;
-    console.log("Latitude: ", currentLocation.coords.latitude);
-    console.log("Longitude: ", currentLocation.coords.longitude);
-    };
-    getPermissions();
-  }, []);
   const fetchEvents = async () => {
     try {
       const response = await fetch(EVENT_API);
@@ -79,6 +90,11 @@ useEffect(() => {
           event.Organizer === user.attributes.email
       );
       applyFiltersAndSort(userEvents);
+      const eventsData = allEvents.map(createDistances);
+      
+      //const availableEvents = eventsData.filter(events => events != undefined)
+      setEvents(eventsData); 
+      setEvents(availableEvents); 
     } catch (error) {
       console.log(error);
     }
@@ -90,6 +106,8 @@ useEffect(() => {
     setEvents(sortedEvents);
     setShowModal(false); // Close modal after applying filters and sorting
   };
+
+  
 
   const applySorting = (events, option) => {
     if (option === "Name") {
@@ -261,7 +279,7 @@ useEffect(() => {
             >
               <RenderItem
                 imageSource={item.Picture}
-                distance="5km"
+                distance={item.distance}
                 title={item.Name}
                 level={item.SkillLevel}
                 eventDate={item.EventTime}

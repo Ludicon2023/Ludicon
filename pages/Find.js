@@ -18,31 +18,11 @@ const Find = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const [distanceList, setDistanceList] = useState(null);
-  const [userLat, setUserLat] = useState(null);
-  const [userLon, setUserLon] = useState(null);
+  const hardcodeLat = 30.28809642898832;
+  const hardcodeLong = -97.73521176086915;
   
 
-  useEffect(() => {
-    const getPermissions = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log("Please grant location permissions");
-        return;
-      }
-
-      try {
-        let currentLocation = await Location.getCurrentPositionAsync({});
-        setUserLat(currentLocation.coords.latitude);
-        setUserLon(currentLocation.coords.longitude);
-        console.log("Latitude: ", userLat);
-        console.log("Longitude: ", userLon);
-      } catch (error) {
-        console.error("Error getting location:", error);
-      }
-    };
   
-    getPermissions();
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -51,10 +31,7 @@ const Find = () => {
       
     }
   }, [user]);
-  useEffect(() => {
-    console.log("Latitude: ", userLat);
-    console.log("Longitude: ", userLon);
-  }, [userLat, userLon]);
+ 
 
 
   const joinEvent = async () => {
@@ -94,9 +71,7 @@ const Find = () => {
   };
   function createDistances(eventData) {
     console.log("wafee2");
-    console.log(userLon);
-    console.log(userLat)
-    if(userLat && userLon && eventData){
+    if(eventData){
     // console.log("event data >>>>", eventData)
      if(eventData.Coordinates){
       const coordinateData = eventData.Coordinates.split(',')
@@ -104,7 +79,7 @@ const Find = () => {
       if(coordinateData){
         console.log("coordinate info",coordinateData)
         const distance = getDistance(
-          { latitude: userLat, longitude: userLon },
+          { latitude: hardcodeLat, longitude: hardcodeLong },
           { latitude:parseFloat(coordinateData[0]), longitude: parseFloat(coordinateData[1]) },
           );
            console.log("distance value: ", distance * 0.000621371192)

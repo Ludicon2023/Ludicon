@@ -219,7 +219,7 @@ const CreateEventScreen = ({ navigation }) => {
     const event = {
       ID: "", // Generate a unique ID for the event
       Name: eventTitle,
-      Place: eventLocation,
+      Place: eventLocation.split(",")[0],
       Description: eventDescription, // TODO: Add multiline text input
       Capacity: parseInt(maxCapacity, 10),
       Organizer: user.attributes.email,
