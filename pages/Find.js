@@ -133,7 +133,7 @@ const Find = () => {
       // );
       const eventsData = allEvents.map(createDistances);
       
-      const availableEvents = eventsData.filter(events => events != undefined)
+      //const availableEvents = eventsData.filter(events => events != undefined)
       setEvents(eventsData); 
       setEvents(availableEvents); 
     } catch (error) {

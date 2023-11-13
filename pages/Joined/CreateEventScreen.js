@@ -360,13 +360,13 @@ const CreateEventScreen = ({ navigation }) => {
           placeholder="Event Location"
           label="Event Location"
           value={eventLocation}
-          onChangeText={(text) => setEventLocation(text)}
-            {suggestions?.predictions.map(prediction => (
+          onChangeText={(text) => setEventLocation(text)}  
+        />
+        {suggestions?.predictions.map(prediction => (
           <Pressable onPress={() => setEventLocation(prediction.description)}>
               <Text>{prediction.description}</Text>
           </Pressable>
       ))}
-        />
         <Datepicker
         style={{ margin: 2 }}
         placeholder='Pick Date'
@@ -381,6 +381,7 @@ const CreateEventScreen = ({ navigation }) => {
         }}
         min={today}
         />
+        
         <Input
           style={{ margin: 2 }}
           placeholder="Maximum Capacity"
