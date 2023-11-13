@@ -18,6 +18,7 @@ import {
   CheckBox,
   TopNavigationAction,
 } from "@ui-kitten/components";
+import * as Location from 'expo-location';
 import RenderItem from "../../components/RenderItem";
 import { useUser } from "../../contexts/UserContext";
 import { NavigationContainer } from "@react-navigation/native";
@@ -40,12 +41,34 @@ const JoinedScreen = ({ navigation, profile }) => {
     "Show Mixed",
   ]); //Default filters
   const [showModal, setShowModal] = useState(false);
-
+   const [location, setLocation] = useState("");
+  const [userLat, setUserLat] = useState(null);
+  const [userLon, setUserLon] = useState(null);
+  const [eventLat, setEventLat] = useState(null);
+  const [eventLon, setEventLon] = useState(null);
   const { user } = useUser();
   useEffect(() => {
     fetchEvents();
   }, [user]);
+useEffect(() => {
+    const getPermissions = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log("Please grant location permissions");
+        return;
+      }
 
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+      'ACCESS_FINE_LOCATION'
+      setUserLat(currentLocation.coords.latitude);
+      setUserLon(currentLocation.coords.longitude);
+    const { longitude } = currentLocation.coords;
+    console.log("Latitude: ", currentLocation.coords.latitude);
+    console.log("Longitude: ", currentLocation.coords.longitude);
+    };
+    getPermissions();
+  }, []);
   const fetchEvents = async () => {
     try {
       const response = await fetch(EVENT_API);
