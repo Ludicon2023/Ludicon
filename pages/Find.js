@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@ui-kitten/components';
+import { getDistance } from 'geolib';
+import * as Location from 'expo-location';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Button } from 'react-native';
 import RenderItem from '../components/RenderItem';  
 import { useUser } from '../contexts/UserContext';  
 import Header from '../components/Header';
+import CreateEventScreen from './Joined/CreateEventScreen';
 //https://cors-anywhere.herokuapp.com/
 const USER_API = "https://shg8a5a6ob.execute-api.us-east-2.amazonaws.com/user";  
 const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
@@ -14,11 +17,44 @@ const Find = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);  
   const [selectedEvent, setSelectedEvent] = useState(null);
 
+  const [distanceList, setDistanceList] = useState(null);
+  const [userLat, setUserLat] = useState(null);
+  const [userLon, setUserLon] = useState(null);
+  
+
+  useEffect(() => {
+    const getPermissions = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log("Please grant location permissions");
+        return;
+      }
+
+      try {
+        let currentLocation = await Location.getCurrentPositionAsync({});
+        setUserLat(currentLocation.coords.latitude);
+        setUserLon(currentLocation.coords.longitude);
+        console.log("Latitude: ", userLat);
+        console.log("Longitude: ", userLon);
+      } catch (error) {
+        console.error("Error getting location:", error);
+      }
+    };
+  
+    getPermissions();
+  }, []);
+
   useEffect(() => {
     if (user) {
+      console.log("fetcing events")
       fetchEvents(); 
+      
     }
   }, [user]);
+  useEffect(() => {
+    console.log("Latitude: ", userLat);
+    console.log("Longitude: ", userLon);
+  }, [userLat, userLon]);
 
 
   const joinEvent = async () => {
@@ -56,7 +92,34 @@ const Find = () => {
     setSelectedEvent(event);
     setIsModalVisible(true);
   };
-
+  function createDistances(eventData) {
+    console.log("wafee2");
+    console.log(userLon);
+    console.log(userLat)
+    if(userLat && userLon && eventData){
+    // console.log("event data >>>>", eventData)
+     if(eventData.Coordinates){
+      const coordinateData = eventData.Coordinates.split(',')
+      console.log(coordinateData)
+      if(coordinateData){
+        console.log("coordinate info",coordinateData)
+        const distance = getDistance(
+          { latitude: userLat, longitude: userLon },
+          { latitude:parseFloat(coordinateData[0]), longitude: parseFloat(coordinateData[1]) },
+          );
+           console.log("distance value: ", distance * 0.000621371192)
+           var newd = distance * 0.000621371192;
+           newd = parseFloat(newd).toFixed(2);
+           newd = newd + " mi";
+           console.log(newd);
+           eventData.distance = newd;
+          // console.log("coordinate info >>>>", coordinateData)
+           return eventData
+      }
+     }
+    }
+    return eventData
+  }
   const fetchEvents = async () => {
     try {
       const response = await fetch(EVENT_API);
@@ -64,6 +127,14 @@ const Find = () => {
       const availableEvents = allEvents.filter(event => 
         !event.Attendees.includes(user.attributes.email) && event.Organizer !== user.attributes.email
       );
+      console.log("wafe");
+      // const availableEvents = allEvents.filter(event => 
+      //   !event.Attendees.includes(user.attributes.email) && event.Organizer !== user.attributes.email
+      // );
+      const eventsData = allEvents.map(createDistances);
+      
+      const availableEvents = eventsData.filter(events => events != undefined)
+      setEvents(eventsData); 
       setEvents(availableEvents); 
     } catch (error) {
       console.log(error);
@@ -95,7 +166,7 @@ const Find = () => {
             >
               <RenderItem
                 imageSource={item.Picture}
-                distance="5km"
+                distance = {item.distance}
                 title={item.Name}
                 level={item.SkillLevel}
                 eventDate={item.EventTime}
