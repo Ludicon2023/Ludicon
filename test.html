@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Google Maps Autocomplete with Coordinates</title>
+   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDw5Hh1zQIXpw6UyG1-85cSJVSdRMYVYl8&libraries=places"></script>
+</head>
+<body>
+   <input id="autocomplete" placeholder="Enter a location" type="text">
+   <!-- Coordinates display -->
+   <div id="coordinates">
+       Latitude: <span id="latitude"></span><br>
+       Longitude: <span id="longitude"></span>
+   </div>
+   <script>
+       function initAutocomplete() {
+           var input = document.getElementById('autocomplete');
+           var autocomplete = new google.maps.places.Autocomplete(input);
+
+           autocomplete.addListener('place_changed', function() {
+               var place = autocomplete.getPlace();
+               if (!place.geometry) {
+                   alert("Place details not found.");
+                   return;
+               }
+
+               var latitudeElement = document.getElementById('latitude');
+               var longitudeElement = document.getElementById('longitude');
+
+               latitudeElement.textContent = place.geometry.location.lat();
+               longitudeElement.textContent = place.geometry.location.lng();
+           });
+       }
+       google.maps.event.addDomListener(window, 'load', initAutocomplete);
+   </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "trigger": true,
+  "modules": [
+    "custom"
+  ],
+  "parentResource": "ludiconfinal24f0f6bf1",
+  "functionName": "ludiconfinal24f0f6bf1PreSignup",
+  "resourceName": "ludiconfinal24f0f6bf1PreSignup",
+  "parentStack": "auth",
+  "triggerEnvs": "[]",
+  "triggerDir": "/snapshot/repo/build/node_modules/@aws-amplify/amplify-category-auth/provider-utils/awscloudformation/triggers/PreSignup",
+  "triggerTemplate": "PreSignup.json.ejs",
+  "triggerEventPath": "PreSignup.event.json",
+  "roleName": "ludiconfinal24f0f6bf1PreSignup",
+  "skipEdit": true,
+  "permissions": {}
+}

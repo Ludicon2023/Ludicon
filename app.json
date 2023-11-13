@@ -28,6 +28,8 @@
       "build": {
         "babel": {
           "include": [
+            "@ui-kitten/components",
+            "@ui-kitten/eva-icons",
             "@aws-amplify/ui-react-native"
            ]
         }
