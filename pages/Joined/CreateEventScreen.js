@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { View, ScrollView, TouchableOpacity } from "react-native";
+import { View, ScrollView, TouchableOpacity,Pressable } from "react-native";
 import {
   Text,
   Layout,
@@ -14,8 +14,11 @@ import {
   CheckBox,
   Datepicker
 } from "@ui-kitten/components";
+import { getDistance } from 'geolib';
 import { useUser } from "../../contexts/UserContext";
 import Header from "../../components/Header";
+import Autocomplete from "react-google-autocomplete";
+import * as Location from 'expo-location';
 const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 
 const firebaseConfig = {
@@ -37,11 +40,17 @@ const CreateEventScreen = ({ navigation }) => {
   const [eventDescription, setEventDescription] = useState("");
   const [eventPicture, setEventPicture] = useState("");
   const [eventLocation, setEventLocation] = useState("");
+  const [suggestions, setSuggestions] = useState();
+  const [location, setLocation] = useState("");
   const [eventDate, setEventDate] = useState(null);
   const [maxCapacity, setMaxCapacity] = useState("");
   const [sport, setSport] = useState("");
   const [skillLevel, setSkillLevel] = useState("Beginner");
   const [gender, setGender] = useState("Mixed");
+  const [userLat, setUserLat] = useState(null);
+  const [userLon, setUserLon] = useState(null);
+  const [eventLat, setEventLat] = useState(null);
+  const [eventLon, setEventLon] = useState(null);
   const [filteredSports, setFilteredSports] = useState([]);
   const [autoGeneratePicture, setAutoGeneratePicture] = useState(true);
 
@@ -205,10 +214,12 @@ const CreateEventScreen = ({ navigation }) => {
         }
       }
     }
+    const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDw5Hh1zQIXpw6UyG1-85cSJVSdRMYVYl8&address=${eventLocation}`);
+    const locationData = await res.json()
     const event = {
       ID: "", // Generate a unique ID for the event
       Name: eventTitle,
-      Place: eventLocation,
+      Place: eventLocation.split(",")[0],
       Description: eventDescription, // TODO: Add multiline text input
       Capacity: parseInt(maxCapacity, 10),
       Organizer: user.attributes.email,
@@ -220,8 +231,13 @@ const CreateEventScreen = ({ navigation }) => {
       ChatLink: "somelink.link", // Hardcoded
       EventTime: eventDate.toLocaleDateString(),
       CreationTime: new Date().toISOString(),
-      Coordinates: "56.77,67.99", // Hardcoded
+      Coordinates: [locationData.results[0].geometry.location.lat, locationData.results[0].geometry.location.lng].join(",")
     };
+    console.log(event.Coordinates);
+    const latitude = locationData.results[0].geometry.location.lat;
+    const longitude = locationData.results[0].geometry.location.lng;
+    setEventLat(latitude);
+    setEventLon(longitude);
     const welcomeMessage = {
       displayedUser: user.attributes.name,
       hiddenUser: user.attributes.email,
@@ -261,7 +277,35 @@ const CreateEventScreen = ({ navigation }) => {
       console.error("Error:", error);
     }
   };
+   useEffect(() => {
+    const getPermissions = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log("Please grant location permissions");
+        return;
+      }
 
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+      'ACCESS_FINE_LOCATION'
+      setUserLat(currentLocation.coords.latitude);
+      setUserLon(currentLocation.coords.longitude);
+    const { longitude } = currentLocation.coords;
+    console.log("Latitude: ", currentLocation.coords.latitude);
+    console.log("Longitude: ", currentLocation.coords.longitude);
+    };
+    getPermissions();
+  }, []);
+
+  
+  useEffect(() => {
+    fetch(`https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyDw5Hh1zQIXpw6UyG1-85cSJVSdRMYVYl8&input=${eventLocation}`)
+    .then(res => res.json())
+    .then(data => setSuggestions(data));
+  }, [eventLocation])
+  useEffect(() => {
+    console.log(suggestions);
+  }, [])
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
     
@@ -316,8 +360,13 @@ const CreateEventScreen = ({ navigation }) => {
           placeholder="Event Location"
           label="Event Location"
           value={eventLocation}
-          onChangeText={(text) => setEventLocation(text)}
+          onChangeText={(text) => setEventLocation(text)}  
         />
+        {suggestions?.predictions.map(prediction => (
+          <Pressable onPress={() => setEventLocation(prediction.description)}>
+              <Text>{prediction.description}</Text>
+          </Pressable>
+      ))}
         <Datepicker
         style={{ margin: 2 }}
         placeholder='Pick Date'
@@ -332,6 +381,7 @@ const CreateEventScreen = ({ navigation }) => {
         }}
         min={today}
         />
+        
         <Input
           style={{ margin: 2 }}
           placeholder="Maximum Capacity"
