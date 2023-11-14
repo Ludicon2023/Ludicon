@@ -284,14 +284,7 @@ const JoinedScreen = ({ navigation, profile }) => {
               }
             >
               <RenderItem
-                imageSource={item.Picture}
-                distance={item.distance}
-                title={item.Name}
-                level={item.SkillLevel}
-                eventDate={item.EventTime}
-                address={item.Place}
-                peopleCount={`${item.Attendees.length}/${item.Capacity}`}
-                organizer={item.Organizer}
+                item={item}
               />
             </TouchableOpacity>
           )}
