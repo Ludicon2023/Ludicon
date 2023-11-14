@@ -46,9 +46,9 @@ const ChatScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     if (user) {
-      console.log("Welcome to Chats, " + user.attributes.name);
-      console.log("Email for user is. " + user.attributes.email);
-      console.log("This is Event: " + event.ID);
+      //console.log("Welcome to Chats, " + user.attributes.name);
+      //console.log("Email for user is. " + user.attributes.email);
+      //console.log("This is Event: " + event.ID);
 
       const chatCollectionRef = collection(db, event.ID);
       const unsubscribe = onSnapshot(chatCollectionRef, (querySnapshot) => {

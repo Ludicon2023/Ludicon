@@ -53,8 +53,13 @@ const CreateEventScreen = ({ navigation }) => {
   const [eventLon, setEventLon] = useState(null);
   const [filteredSports, setFilteredSports] = useState([]);
   const [autoGeneratePicture, setAutoGeneratePicture] = useState(true);
-
   const today = new Date();
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+
   const handleSportChange = (text) => {
     setSport(text);
     const filtered = validSports.filter((s) =>
@@ -62,6 +67,7 @@ const CreateEventScreen = ({ navigation }) => {
     );
     setFilteredSports(filtered);
   };
+
   const handleEventPictureChange = (text) => {
     setEventPicture(text);
     if (text) {
@@ -70,12 +76,14 @@ const CreateEventScreen = ({ navigation }) => {
       setAutoGeneratePicture(true); 
     }
   };
+
   const handleAutoGenerateCheck = (isChecked) => {
     setAutoGeneratePicture(isChecked);
     if (isChecked) {
       setEventPicture(''); 
     }
   };
+
   const validSports = [
     'american football',
     'football',
@@ -203,7 +211,7 @@ const CreateEventScreen = ({ navigation }) => {
           });
 
           if (response.data.photos.length > 0) {
-            console.log(response.data.photos[0].src.original);
+            //console.log(response.data.photos[0].src.original);
             pictureUrl = response.data.photos[0].src.original;
           } else {
             return 'No image found';
@@ -233,7 +241,7 @@ const CreateEventScreen = ({ navigation }) => {
       CreationTime: new Date().toISOString(),
       Coordinates: [locationData.results[0].geometry.location.lat, locationData.results[0].geometry.location.lng].join(",")
     };
-    console.log(event.Coordinates);
+    //console.log(event.Coordinates);
     const latitude = locationData.results[0].geometry.location.lat;
     const longitude = locationData.results[0].geometry.location.lng;
     setEventLat(latitude);
@@ -291,8 +299,8 @@ const CreateEventScreen = ({ navigation }) => {
       setUserLat(currentLocation.coords.latitude);
       setUserLon(currentLocation.coords.longitude);
     const { longitude } = currentLocation.coords;
-    console.log("Latitude: ", currentLocation.coords.latitude);
-    console.log("Longitude: ", currentLocation.coords.longitude);
+    //console.log("Latitude: ", currentLocation.coords.latitude);
+    //console.log("Longitude: ", currentLocation.coords.longitude);
     };
     getPermissions();
   }, []);
@@ -304,7 +312,7 @@ const CreateEventScreen = ({ navigation }) => {
     .then(data => setSuggestions(data));
   }, [eventLocation])
   useEffect(() => {
-    console.log(suggestions);
+    //console.log(suggestions);
   }, [])
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
@@ -335,11 +343,11 @@ const CreateEventScreen = ({ navigation }) => {
               <TouchableOpacity
                 key={s}
                 onPress={() => {
-                  setSport(s);
-                  setFilteredSports([]);
+                  setSport(capitalizeFirstLetter(s));
+                  setTimeout(() => setFilteredSports([]), 100);
                 }}
               >
-                <Text>{s}</Text>
+                <Text>{capitalizeFirstLetter(s)}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -362,11 +370,17 @@ const CreateEventScreen = ({ navigation }) => {
           value={eventLocation}
           onChangeText={(text) => setEventLocation(text)}  
         />
+        
         {suggestions?.predictions.map(prediction => (
-          <Pressable onPress={() => setEventLocation(prediction.description)}>
-              <Text>{prediction.description}</Text>
-          </Pressable>
-      ))}
+        <Pressable 
+          onPress={() => {
+          setEventLocation(prediction.description);
+          setTimeout(() => setSuggestions(null), 200);
+        }}
+      >
+    <Text>{prediction.description}</Text>
+  </Pressable>
+))}
         <Datepicker
         style={{ margin: 2 }}
         placeholder='Pick Date'

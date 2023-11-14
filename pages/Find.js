@@ -26,9 +26,8 @@ const Find = () => {
 
   useEffect(() => {
     if (user) {
-      console.log("fetcing events")
+      //console.log("fetching events")
       fetchEvents(); 
-      
     }
   }, [user]);
  
@@ -70,23 +69,23 @@ const Find = () => {
     setIsModalVisible(true);
   };
   function createDistances(eventData) {
-    console.log("wafee2");
+    //console.log("wafee2");
     if(eventData){
     // console.log("event data >>>>", eventData)
      if(eventData.Coordinates){
       const coordinateData = eventData.Coordinates.split(',')
-      console.log(coordinateData)
+      //console.log(coordinateData)
       if(coordinateData){
-        console.log("coordinate info",coordinateData)
+        //console.log("coordinate info",coordinateData)
         const distance = getDistance(
           { latitude: hardcodeLat, longitude: hardcodeLong },
           { latitude:parseFloat(coordinateData[0]), longitude: parseFloat(coordinateData[1]) },
           );
-           console.log("distance value: ", distance * 0.000621371192)
+           //console.log("distance value: ", distance * 0.000621371192)
            var newd = distance * 0.000621371192;
            newd = parseFloat(newd).toFixed(2);
            newd = newd + " mi";
-           console.log(newd);
+           //console.log(newd);
            eventData.distance = newd;
           // console.log("coordinate info >>>>", coordinateData)
            return eventData
@@ -102,7 +101,7 @@ const Find = () => {
       const availableEvents = allEvents.filter(event => 
         !event.Attendees.includes(user.attributes.email) && event.Organizer !== user.attributes.email
       );
-      console.log("wafe");
+      //console.log("wafe");
       // const availableEvents = allEvents.filter(event => 
       //   !event.Attendees.includes(user.attributes.email) && event.Organizer !== user.attributes.email
       // );
