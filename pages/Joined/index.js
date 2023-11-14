@@ -22,7 +22,7 @@ import {
 import * as Location from 'expo-location';
 import RenderItem from "../../components/RenderItem";
 import { useUser } from "../../contexts/UserContext";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Header from "../../components/Header";
@@ -48,26 +48,27 @@ const JoinedScreen = ({ navigation, profile }) => {
   const [eventLat, setEventLat] = useState(null);
   const [eventLon, setEventLon] = useState(null);
   const { user } = useUser();
+
   const hardcodeLat = 30.28809642898832;
   const hardcodeLong = -97.73521176086915;
+
   function createDistances(eventData) {
-    console.log("wafee2");
     if(eventData){
     // console.log("event data >>>>", eventData)
      if(eventData.Coordinates){
       const coordinateData = eventData.Coordinates.split(',')
-      console.log(coordinateData)
+      //console.log(coordinateData)
       if(coordinateData){
-        console.log("coordinate info",coordinateData)
+        //console.log("coordinate info",coordinateData)
         const distance = getDistance(
           { latitude: hardcodeLat, longitude: hardcodeLong },
           { latitude:parseFloat(coordinateData[0]), longitude: parseFloat(coordinateData[1]) },
           );
-           console.log("distance value: ", distance * 0.000621371192)
+           //console.log("distance value: ", distance * 0.000621371192)
            var newd = distance * 0.000621371192;
            newd = parseFloat(newd).toFixed(2);
            newd = newd + " mi";
-           console.log(newd);
+           //console.log(newd);
            eventData.distance = newd;
           // console.log("coordinate info >>>>", coordinateData)
            return eventData
@@ -76,9 +77,17 @@ const JoinedScreen = ({ navigation, profile }) => {
     }
     return eventData
   }
-  useEffect(() => {
-    fetchEvents();
-  }, [user]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // This block will be executed when the screen is focused
+      fetchEvents();
+
+      return () => {
+        // Cleanup (if needed) when the component is unmounted or loses focus
+      };
+    }, [])
+  );
 
   const fetchEvents = async () => {
     try {
@@ -91,10 +100,9 @@ const JoinedScreen = ({ navigation, profile }) => {
       );
       applyFiltersAndSort(userEvents);
       const eventsData = allEvents.map(createDistances);
-      
       //const availableEvents = eventsData.filter(events => events != undefined)
-      setEvents(eventsData); 
-      setEvents(availableEvents); 
+      //setEvents(eventsData); 
+      //setEvents(availableEvents); 
     } catch (error) {
       console.log(error);
     }
@@ -106,8 +114,6 @@ const JoinedScreen = ({ navigation, profile }) => {
     setEvents(sortedEvents);
     setShowModal(false); // Close modal after applying filters and sorting
   };
-
-  
 
   const applySorting = (events, option) => {
     if (option === "Name") {
@@ -293,6 +299,7 @@ const JoinedScreen = ({ navigation, profile }) => {
           keyExtractor={(item) => item.ID}
           contentContainerStyle={{ padding: 16 }}
         />
+        <View style={{ height: 60 }} />
       </View>
       {renderFilterModal()}
     </View>

@@ -56,6 +56,7 @@ const EventScreen = ({ route, navigation }) => {
           if (response.ok) {
             
               console.log(user.attributes.email + " has left the event " + event.Name);
+              //need to refresh events here
           } else {
               console.error("Failed to leave the event");
           }
@@ -93,7 +94,7 @@ const EventScreen = ({ route, navigation }) => {
         <ListItem title={`Skill Level: ${event.SkillLevel}`} />
         <ListItem title={`Sport: ${event.Sport}`} />
         <ListItem title={`Gender: ${event.Gender}`} />
-         <ListItem title={`Pic url: ${event.Picture}`} />
+
         {/* Add more event details as needed */}
       </Layout>
 
