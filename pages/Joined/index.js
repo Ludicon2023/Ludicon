@@ -22,7 +22,7 @@ import {
 import * as Location from 'expo-location';
 import RenderItem from "../../components/RenderItem";
 import { useUser } from "../../contexts/UserContext";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Header from "../../components/Header";
@@ -78,9 +78,16 @@ const JoinedScreen = ({ navigation, profile }) => {
     return eventData
   }
 
-  useEffect(() => {
-    fetchEvents();
-  }, [user]);
+  useFocusEffect(
+    React.useCallback(() => {
+      // This block will be executed when the screen is focused
+      fetchEvents();
+
+      return () => {
+        // Cleanup (if needed) when the component is unmounted or loses focus
+      };
+    }, [])
+  );
 
   const fetchEvents = async () => {
     try {
@@ -292,6 +299,7 @@ const JoinedScreen = ({ navigation, profile }) => {
           keyExtractor={(item) => item.ID}
           contentContainerStyle={{ padding: 16 }}
         />
+        <View style={{ height: 60 }} />
       </View>
       {renderFilterModal()}
     </View>
