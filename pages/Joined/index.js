@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getDistance } from 'geolib';
+import { getDistance } from "geolib";
 import {
   View,
   ScrollView,
@@ -19,7 +19,7 @@ import {
   CheckBox,
   TopNavigationAction,
 } from "@ui-kitten/components";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 import RenderItem from "../../components/RenderItem";
 import { useUser } from "../../contexts/UserContext";
 import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
@@ -42,42 +42,11 @@ const JoinedScreen = ({ navigation, profile }) => {
     "Show Mixed",
   ]); //Default filters
   const [showModal, setShowModal] = useState(false);
-   const [location, setLocation] = useState("");
-  const [userLat, setUserLat] = useState(null);
-  const [userLon, setUserLon] = useState(null);
-  const [eventLat, setEventLat] = useState(null);
-  const [eventLon, setEventLon] = useState(null);
   const { user } = useUser();
 
   const hardcodeLat = 30.28809642898832;
   const hardcodeLong = -97.73521176086915;
-
-  function createDistances(eventData) {
-    if(eventData){
-    // console.log("event data >>>>", eventData)
-     if(eventData.Coordinates){
-      const coordinateData = eventData.Coordinates.split(',')
-      //console.log(coordinateData)
-      if(coordinateData){
-        //console.log("coordinate info",coordinateData)
-        const distance = getDistance(
-          { latitude: hardcodeLat, longitude: hardcodeLong },
-          { latitude:parseFloat(coordinateData[0]), longitude: parseFloat(coordinateData[1]) },
-          );
-           //console.log("distance value: ", distance * 0.000621371192)
-           var newd = distance * 0.000621371192;
-           newd = parseFloat(newd).toFixed(2);
-           newd = newd + " mi";
-           //console.log(newd);
-           eventData.distance = newd;
-          // console.log("coordinate info >>>>", coordinateData)
-           return eventData
-      }
-     }
-    }
-    return eventData
-  }
-
+  
   useFocusEffect(
     React.useCallback(() => {
       // This block will be executed when the screen is focused
@@ -99,17 +68,39 @@ const JoinedScreen = ({ navigation, profile }) => {
           event.Organizer === user.attributes.email
       );
       applyFiltersAndSort(userEvents);
-      const eventsData = allEvents.map(createDistances);
-      //const availableEvents = eventsData.filter(events => events != undefined)
-      //setEvents(eventsData); 
-      //setEvents(availableEvents); 
     } catch (error) {
       console.log(error);
     }
   };
 
+  let calculateDistances = (events) => {
+    const eventsWithDistances = events.map((event) => {
+      if (event && event.Coordinates) {
+        const coordinateData = event.Coordinates.split(",");
+        if (coordinateData.length === 2) {
+          const eventLocation = {
+            latitude: parseFloat(coordinateData[0]),
+            longitude: parseFloat(coordinateData[1]),
+          };
+          const userLocation = {
+            latitude: hardcodeLat,
+            longitude: hardcodeLong,
+          };
+          const distance = getDistance(userLocation, eventLocation);
+  
+          const newd = parseFloat(distance * 0.000621371192).toFixed(2);
+          return { ...event, distance: newd };
+        }
+      }
+      return event;
+    });
+  
+    return eventsWithDistances;
+  };  
+
   const applyFiltersAndSort = (events) => {
-    let filteredEvents = filterEvents(events, filterOptions);
+    let eventsWithDistances = calculateDistances(events)
+    let filteredEvents = filterEvents(eventsWithDistances, filterOptions);
     let sortedEvents = applySorting(filteredEvents, sortOption);
     setEvents(sortedEvents);
     setShowModal(false); // Close modal after applying filters and sorting
@@ -122,6 +113,11 @@ const JoinedScreen = ({ navigation, profile }) => {
       return events
         .slice()
         .sort((a, b) => a.Attendees.length - b.Attendees.length);
+    } else if (option === "Distance") {
+      // Assuming that the distance values are available for comparison
+      return events
+        .slice()
+        .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
     }
     return events;
   };
@@ -168,7 +164,7 @@ const JoinedScreen = ({ navigation, profile }) => {
   };
 
   const renderFilterModal = () => {
-    const sortOptions = ["Name", "Players"];
+    const sortOptions = ["Name", "Players", "Distance"];
     const availableFilterOptions = [
       "Show Full Games",
       "Show Male",
@@ -245,7 +241,7 @@ const JoinedScreen = ({ navigation, profile }) => {
                 <Icon
                   {...props}
                   name="plus-outline"
-                  style={{ width: 30, height: 30, marginRight: 6}}
+                  style={{ width: 30, height: 30, marginRight: 6 }}
                 />
               )}
               onPress={() => navigation.navigate("CreateEventScreen")}
@@ -283,9 +279,7 @@ const JoinedScreen = ({ navigation, profile }) => {
                 navigation.navigate("EventScreen", { event: item })
               }
             >
-              <RenderItem
-                item={item}
-              />
+              <RenderItem item={item} />
             </TouchableOpacity>
           )}
           ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
