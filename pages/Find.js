@@ -84,7 +84,6 @@ const Find = () => {
            //console.log("distance value: ", distance * 0.000621371192)
            var newd = distance * 0.000621371192;
            newd = parseFloat(newd).toFixed(2);
-           newd = newd + " mi";
            //console.log(newd);
            eventData.distance = newd;
           // console.log("coordinate info >>>>", coordinateData)

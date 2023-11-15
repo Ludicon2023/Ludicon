@@ -55,7 +55,7 @@ const RenderItem = ({ item }) => {
         <View style={styles.overlay} />
       </View>
       <View style={styles.textOverlay}>
-        <Text style={styles.distanceText}>{item.distance}</Text>
+        <Text style={styles.distanceText}>{`${item.distance} mi`}</Text>
         <Text style={styles.titleText}>{item.Name}</Text>
         <Text style={styles.levelText}>
           {item.Sport}, {item.SkillLevel}, {item.Gender}{" "}
