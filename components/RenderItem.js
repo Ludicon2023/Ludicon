@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { Text, Avatar } from "@ui-kitten/components";
+import { Text, Avatar, Icon} from "@ui-kitten/components";
 
 const API_URL = "https://shg8a5a6ob.execute-api.us-east-2.amazonaws.com/user";
 
@@ -87,8 +87,22 @@ const RenderItem = ({ item }) => {
             )}
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.infoText}>{item.EventTime}</Text>
-            <Text style={styles.infoText}>{item.Place}</Text>
+            <View style={styles.iconAndTextContainer}>
+              <Icon
+                name="pin-outline" // Icon name for location
+                fill="black" // Icon color
+                style={styles.icon}
+              />
+              <Text style={styles.infoTextLocation}>{item.Place}</Text>
+            </View>
+            <View style={styles.iconAndTextContainer}>
+              <Icon
+                name="calendar-outline" // Icon name for calendar
+                fill="black" // Icon color
+                style={styles.icon}
+              />
+              <Text style={styles.infoTextTime}>{item.EventTime}</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -145,11 +159,15 @@ const styles = StyleSheet.create({
     color: "white",
   },
   infoContainer: {
-    padding: 10,
+    padding: 5,
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  infoText: {
+  infoTextLocation: {
+    color: "black",
+    fontWeight: "bold",
+  },
+  infoTextTime: {
     color: "black",
   },
   organizerText: {
@@ -176,6 +194,16 @@ const styles = StyleSheet.create({
   },
   textBelowAvatars: {
     marginTop: 10, // Adjust the margin as needed
+  },
+  iconAndTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+    tintColor: "black",
   },
 });
 
