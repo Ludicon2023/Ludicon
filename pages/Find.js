@@ -84,7 +84,6 @@ const Find = () => {
            //console.log("distance value: ", distance * 0.000621371192)
            var newd = distance * 0.000621371192;
            newd = parseFloat(newd).toFixed(2);
-           newd = newd + " mi";
            //console.log(newd);
            eventData.distance = newd;
           // console.log("coordinate info >>>>", coordinateData)
@@ -139,14 +138,7 @@ const Find = () => {
               }
             >
               <RenderItem
-                imageSource={item.Picture}
-                distance = {item.distance}
-                title={item.Name}
-                level={item.SkillLevel}
-                eventDate={item.EventTime}
-                address={item.Place}
-                peopleCount={`${item.Attendees.length}/${item.Capacity}`}
-                organizer={item.Organizer}
+                item={item}
               />
             </TouchableOpacity>
           )}
