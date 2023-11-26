@@ -69,9 +69,9 @@ const EventScreen = ({ route, navigation, isFindPage }) => {
 
   const joinEvent = async () => {
     // User is joining the event, add the username to the attendees list
-    const updatedAttendees = [...selectedEvent.Attendees, user.attributes.email];
+    const updatedAttendees = [...event.Attendees, user.attributes.email];
     const updatedEvent = {
-        ...selectedEvent,
+        ...event,
         Attendees: updatedAttendees
     };
 
@@ -85,7 +85,7 @@ const EventScreen = ({ route, navigation, isFindPage }) => {
         });
 
         if (response.ok) {
-            console.log(user.attributes.email + " has joined the event " + selectedEvent.Name);
+            console.log(user.attributes.email + " has joined the event " + event.Name);
         } else {
             console.error("Failed to join the event");
         }
