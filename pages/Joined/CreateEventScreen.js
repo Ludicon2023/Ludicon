@@ -1,8 +1,8 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { View, ScrollView, TouchableOpacity,Pressable } from "react-native";
+import { View, ScrollView, TouchableOpacity, Pressable } from "react-native";
 import {
   Text,
   Layout,
@@ -12,14 +12,16 @@ import {
   Select,
   SelectItem,
   CheckBox,
-  Datepicker
+  Datepicker,
 } from "@ui-kitten/components";
-import { getDistance } from 'geolib';
+import { getDistance } from "geolib";
 import { useUser } from "../../contexts/UserContext";
 import Header from "../../components/Header";
 import Autocomplete from "react-google-autocomplete";
-import * as Location from 'expo-location';
-const EVENT_API = "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import * as Location from "expo-location";
+const EVENT_API =
+  "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC5SCmPDmgj1_mXaMCanGe-zu5E7lKa6Ac",
@@ -28,7 +30,7 @@ const firebaseConfig = {
   storageBucket: "ludicon-e292d.appspot.com",
   messagingSenderId: "1026436891213",
   appId: "1:1026436891213:web:e8f3499b66578dadc7d204",
-  measurementId: "G-7XPQY8SNQL"
+  measurementId: "G-7XPQY8SNQL",
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -42,7 +44,6 @@ const CreateEventScreen = ({ navigation }) => {
   const [eventLocation, setEventLocation] = useState("");
   const [suggestions, setSuggestions] = useState();
   const [location, setLocation] = useState("");
-  const [eventDate, setEventDate] = useState(null);
   const [maxCapacity, setMaxCapacity] = useState("");
   const [sport, setSport] = useState("");
   const [skillLevel, setSkillLevel] = useState("Beginner");
@@ -53,12 +54,28 @@ const CreateEventScreen = ({ navigation }) => {
   const [eventLon, setEventLon] = useState(null);
   const [filteredSports, setFilteredSports] = useState([]);
   const [autoGeneratePicture, setAutoGeneratePicture] = useState(true);
+
   const today = new Date();
+  const [date, setDate] = useState(today);
+  const [time, setTime] = useState(today);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const onDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(Platform.OS === "ios"); // Hide the picker modal on Android after selection
+    setDate(currentDate);
+  };
+
+  const onTimeChange = (event, selectedTime) => {
+    const currentTime = selectedTime || time;
+    setShowTimePicker(Platform.OS === "ios"); // Hide the picker modal on Android after selection
+    setTime(currentTime);
+  };
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
-
 
   const handleSportChange = (text) => {
     setSport(text);
@@ -71,127 +88,121 @@ const CreateEventScreen = ({ navigation }) => {
   const handleEventPictureChange = (text) => {
     setEventPicture(text);
     if (text) {
-      setAutoGeneratePicture(false); 
+      setAutoGeneratePicture(false);
     } else {
-      setAutoGeneratePicture(true); 
+      setAutoGeneratePicture(true);
     }
   };
 
   const handleAutoGenerateCheck = (isChecked) => {
     setAutoGeneratePicture(isChecked);
     if (isChecked) {
-      setEventPicture(''); 
+      setEventPicture("");
     }
   };
 
   const validSports = [
-    'american football',
-    'football',
-    'pickleball',
-    'running',
-    'baseball',
-    'basketball',
-    'soccer',
-    'ice hockey',
-    'hockey',
-    'golf',
-    'tennis',
-    'volleyball',
-    'swimming',
-    'track and field',
-    'athletics',
-    'boxing',
-    'mixed martial arts',
-    'mma',
-    'wrestling',
-    'gymnastics',
-    'lacrosse',
-    'softball',
-    'skiing',
-    'snowboarding',
-    'skateboarding',
-    'surfing',
-    'bowling',
-    'cycling',
-    'motor racing',
-    'nascar',
-    'indycar',
-    'horse racing',
-    'rodeo',
-    'sailing',
-    'rowing',
-    'canoeing',
-    'kayaking',
-    'fishing',
-    'diving',
-    'water polo',
-    'badminton',
-    'squash',
-    'racquetball',
-    'table tennis',
-    'fencing',
-    'archery',
-    'billiards',
-    'pool',
-    'ultimate frisbee',
-    'disc golf',
-    'cheerleading',
-    'dance',
-    'competitive dance',
-    'rugby',
-    'cricket',
-    'handball',
-    'judo',
-    'taekwondo',
-    'karate',
-    'kung fu',
-    'jiu-jitsu',
-    'parkour',
-    'triathlon',
-    'marathon running',
-    'mountain biking',
-    'bmx',
-    'rock climbing',
-    'climbing',
-    'weightlifting',
-    'lifting',
-    'bodybuilding',
-    'crossfit',
-    'paddleboarding',
-    'windsurfing',
-    'kitesurfing',
-    'paragliding',
-    'skydiving',
-    'hang gliding',
-    'bobsledding',
-    'figure skating',
-    'speed skating',
-    'curling',
-    'field hockey',
-    'shooting',
-    'sport shooting',
-    'trap shooting',
-    'dart throwing',
-    'polo',
-    'chess boxing',
-    'equestrian',
-    'dressage',
-    'jumping',
-    'eventing'
-];
+    "american football",
+    "football",
+    "pickleball",
+    "running",
+    "baseball",
+    "basketball",
+    "soccer",
+    "ice hockey",
+    "hockey",
+    "golf",
+    "tennis",
+    "volleyball",
+    "swimming",
+    "track and field",
+    "athletics",
+    "boxing",
+    "mixed martial arts",
+    "mma",
+    "wrestling",
+    "gymnastics",
+    "lacrosse",
+    "softball",
+    "skiing",
+    "snowboarding",
+    "skateboarding",
+    "surfing",
+    "bowling",
+    "cycling",
+    "motor racing",
+    "nascar",
+    "indycar",
+    "horse racing",
+    "rodeo",
+    "sailing",
+    "rowing",
+    "canoeing",
+    "kayaking",
+    "fishing",
+    "diving",
+    "water polo",
+    "badminton",
+    "squash",
+    "racquetball",
+    "table tennis",
+    "fencing",
+    "archery",
+    "billiards",
+    "pool",
+    "ultimate frisbee",
+    "disc golf",
+    "cheerleading",
+    "dance",
+    "competitive dance",
+    "rugby",
+    "cricket",
+    "handball",
+    "judo",
+    "taekwondo",
+    "karate",
+    "kung fu",
+    "jiu-jitsu",
+    "parkour",
+    "triathlon",
+    "marathon running",
+    "mountain biking",
+    "bmx",
+    "rock climbing",
+    "climbing",
+    "weightlifting",
+    "lifting",
+    "bodybuilding",
+    "crossfit",
+    "paddleboarding",
+    "windsurfing",
+    "kitesurfing",
+    "paragliding",
+    "skydiving",
+    "hang gliding",
+    "bobsledding",
+    "figure skating",
+    "speed skating",
+    "curling",
+    "field hockey",
+    "shooting",
+    "sport shooting",
+    "trap shooting",
+    "dart throwing",
+    "polo",
+    "chess boxing",
+    "equestrian",
+    "dressage",
+    "jumping",
+    "eventing",
+  ];
   const isValidSport = (inputSport) => {
     return validSports.includes(inputSport.toLowerCase());
   };
-  const axios = require('axios');
+  const axios = require("axios");
   const createEvent = async () => {
     // Validation to ensure all fields are filled
-    if (
-      !eventTitle ||
-      !eventLocation ||
-      !eventDate ||
-      !maxCapacity ||
-      !sport
-    ) {
+    if (!eventTitle || !eventLocation || !maxCapacity || !sport) {
       alert("All fields are required!");
       return;
     }
@@ -201,29 +212,51 @@ const CreateEventScreen = ({ navigation }) => {
         alert("Please enter a valid sport to auto-generate images.");
         return;
       } else {
-        const apiKey = 'yHB44HHTlimaF7MiVqehVXLsuy722UT3qQslCjXqs4cxmg0Wdyt4kqJN';
-        const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(sport)}&orientation=landscape&per_page=1`;
+        const apiKey =
+          "yHB44HHTlimaF7MiVqehVXLsuy722UT3qQslCjXqs4cxmg0Wdyt4kqJN";
+        const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(
+          sport
+        )}&orientation=landscape&per_page=1`;
         try {
           const response = await axios.get(url, {
             headers: {
-              Authorization: apiKey
-            }
+              Authorization: apiKey,
+            },
           });
 
           if (response.data.photos.length > 0) {
             //console.log(response.data.photos[0].src.original);
             pictureUrl = response.data.photos[0].src.original;
           } else {
-            return 'No image found';
+            return "No image found";
           }
         } catch (error) {
-          console.error('Error fetching image:', error);
-          return 'Error fetching image';
+          console.error("Error fetching image:", error);
+          return "Error fetching image";
         }
       }
     }
-    const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDw5Hh1zQIXpw6UyG1-85cSJVSdRMYVYl8&address=${eventLocation}`);
-    const locationData = await res.json()
+    const res = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDw5Hh1zQIXpw6UyG1-85cSJVSdRMYVYl8&address=${eventLocation}`
+    );
+    const locationData = await res.json();
+
+    // date time
+    const combineDateTime = (date, time) => {
+      return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        time.getHours(),
+        time.getMinutes()
+      );
+    };
+
+    const eventDate = combineDateTime(date, time);
+    const dateString = eventDate.toLocaleDateString();
+    const timeString = eventDate.toLocaleTimeString();
+    const eventDateTimeString = `${dateString} ${timeString}`;
+
     const event = {
       ID: "", // Generate a unique ID for the event
       Name: eventTitle,
@@ -237,9 +270,12 @@ const CreateEventScreen = ({ navigation }) => {
       Gender: gender,
       Picture: pictureUrl,
       ChatLink: "somelink.link", // Hardcoded
-      EventTime: eventDate.toLocaleDateString(),
+      EventTime: eventDateTimeString,
       CreationTime: new Date().toISOString(),
-      Coordinates: [locationData.results[0].geometry.location.lat, locationData.results[0].geometry.location.lng].join(",")
+      Coordinates: [
+        locationData.results[0].geometry.location.lat,
+        locationData.results[0].geometry.location.lng,
+      ].join(","),
     };
     //console.log(event.Coordinates);
     const latitude = locationData.results[0].geometry.location.lat;
@@ -263,17 +299,16 @@ const CreateEventScreen = ({ navigation }) => {
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Created event with ID: " + responseData);    
+        console.log("Created event with ID: " + responseData);
         setEventID(responseData);
         const eventCollection = collection(db, responseData);
-        const welcomeMessageDocRef = doc(eventCollection, 'welcomeMessage');
+        const welcomeMessageDocRef = doc(eventCollection, "welcomeMessage");
         await setDoc(welcomeMessageDocRef, welcomeMessage);
         console.log("Event created:", event);
         // Clear input fields
         setEventTitle("");
         setEventPicture("");
         setEventLocation("");
-        setEventDate("");
         setMaxCapacity("");
         setSport("");
         // Navigate back to the previous screen or any desired screen
@@ -285,38 +320,38 @@ const CreateEventScreen = ({ navigation }) => {
       console.error("Error:", error);
     }
   };
-   useEffect(() => {
+  useEffect(() => {
     const getPermissions = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
+      if (status !== "granted") {
         console.log("Please grant location permissions");
         return;
       }
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation);
-      'ACCESS_FINE_LOCATION'
+      ("ACCESS_FINE_LOCATION");
       setUserLat(currentLocation.coords.latitude);
       setUserLon(currentLocation.coords.longitude);
-    const { longitude } = currentLocation.coords;
-    //console.log("Latitude: ", currentLocation.coords.latitude);
-    //console.log("Longitude: ", currentLocation.coords.longitude);
+      const { longitude } = currentLocation.coords;
+      //console.log("Latitude: ", currentLocation.coords.latitude);
+      //console.log("Longitude: ", currentLocation.coords.longitude);
     };
     getPermissions();
   }, []);
 
-  
   useEffect(() => {
-    fetch(`https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyDw5Hh1zQIXpw6UyG1-85cSJVSdRMYVYl8&input=${eventLocation}`)
-    .then(res => res.json())
-    .then(data => setSuggestions(data));
-  }, [eventLocation])
+    fetch(
+      `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyDw5Hh1zQIXpw6UyG1-85cSJVSdRMYVYl8&input=${eventLocation}`
+    )
+      .then((res) => res.json())
+      .then((data) => setSuggestions(data));
+  }, [eventLocation]);
   useEffect(() => {
     //console.log(suggestions);
-  }, [])
+  }, []);
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-    
       <Header
         title="Create New Event"
         showBackButton={true}
@@ -353,7 +388,7 @@ const CreateEventScreen = ({ navigation }) => {
           </View>
         )}
         <Input
-        style={{ margin: 2 }}
+          style={{ margin: 2 }}
           label="Event Description"
           placeholder="Enter your event's description"
           multiline
@@ -362,40 +397,72 @@ const CreateEventScreen = ({ navigation }) => {
           onChangeText={(text) => setEventDescription(text)}
           maxLength={600}
         />
-        
+
         <Input
           style={{ margin: 2 }}
           placeholder="Event Location"
           label="Event Location"
           value={eventLocation}
-          onChangeText={(text) => setEventLocation(text)}  
+          onChangeText={(text) => setEventLocation(text)}
         />
-        
-        {suggestions?.predictions.map(prediction => (
-        <Pressable 
-          onPress={() => {
-          setEventLocation(prediction.description);
-          setTimeout(() => setSuggestions(null), 200);
-        }}
-      >
-    <Text>{prediction.description}</Text>
-  </Pressable>
-))}
-        <Datepicker
-        style={{ margin: 2 }}
-        placeholder='Pick Date'
-        label="Event Date and Time"
-        date={eventDate}
-        onSelect={(nextDate) => {
-          if (nextDate >= today) {
-            setEventDate(nextDate);
-          } else {
-            alert('Event date cannot be before today\'s date.');
-          }
-        }}
-        min={today}
-        />
-        
+
+        {suggestions?.predictions.map((prediction) => (
+          <Pressable
+            onPress={() => {
+              setEventLocation(prediction.description);
+              setTimeout(() => setSuggestions(null), 200);
+            }}
+          >
+            <Text>{prediction.description}</Text>
+          </Pressable>
+        ))}
+
+        <Layout style={{ padding: 16 }}>
+          {/* Displaying the currently picked date */}
+          <Text category="label" style={{ marginBottom: 8 }}>
+            Selected Date: {date.toLocaleDateString()}
+          </Text>
+          <Button
+            onPress={() => setShowDatePicker(true)}
+            style={{ marginBottom: 8 }} // Adding vertical padding
+            appearance="outline" // Making the button outlined
+          >
+            Select Date
+          </Button>
+          {/* Date Picker */}
+          {showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="default"
+              onChange={onDateChange}
+              maximumDate={new Date(2300, 10, 20)}
+              minimumDate={new Date()}
+            />
+          )}
+
+          {/* Displaying the currently picked time */}
+          <Text category="label" style={{ marginBottom: 8 }}>
+            Selected Time: {time.toLocaleTimeString()}
+          </Text>
+          <Button
+            onPress={() => setShowTimePicker(true)}
+            style={{ marginBottom: 8 }} // Adding vertical padding
+            appearance="outline" // Making the button outlined
+          >
+            Select Time
+          </Button>
+          {/* Time Picker */}
+          {showTimePicker && (
+            <DateTimePicker
+              value={time}
+              mode="time"
+              display="default"
+              onChange={onTimeChange}
+            />
+          )}
+        </Layout>
+
         <Input
           style={{ margin: 2 }}
           placeholder="Maximum Capacity"
@@ -412,7 +479,7 @@ const CreateEventScreen = ({ navigation }) => {
         />
         <CheckBox
           checked={autoGeneratePicture}
-          onChange={nextChecked => handleAutoGenerateCheck(nextChecked)}
+          onChange={(nextChecked) => handleAutoGenerateCheck(nextChecked)}
         >
           Auto-Generate Picture
         </CheckBox>
@@ -439,7 +506,10 @@ const CreateEventScreen = ({ navigation }) => {
             <SelectItem title={gen} key={gen} />
           ))}
         </Select>
-        <Button onPress={createEvent}>Create Event</Button>
+        <Button onPress={createEvent} style={{ padding: 16 }}>
+          Create Event
+        </Button>
+        <View style={{ height: 60 }} />
       </Layout>
     </ScrollView>
   );
