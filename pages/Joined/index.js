@@ -247,7 +247,8 @@ const JoinedScreen = ({ navigation, isFindPage }) => {
     <View style={{ flex: 1 }}>
       {/* Custom Header */}
       <Header
-        title="My Joined Events"
+        title={isFindPage ? "Find Events" : "My Joined Events"}
+
         accessoryButtons={
           <>
             <TopNavigationAction
