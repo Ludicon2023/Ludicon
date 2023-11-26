@@ -14,7 +14,7 @@ const EVENT_API =
 
 import Header from "../../components/Header";
   
-const EventScreen = ({ route, navigation }) => {
+const EventScreen = ({ route, navigation, isFindPage }) => {
   const { event } = route.params;
   const {user} = useUser();
   const leaveEvent = async () => {
@@ -67,6 +67,34 @@ const EventScreen = ({ route, navigation }) => {
     navigation.goBack(); 
   };
 
+  const joinEvent = async () => {
+    // User is joining the event, add the username to the attendees list
+    const updatedAttendees = [...selectedEvent.Attendees, user.attributes.email];
+    const updatedEvent = {
+        ...selectedEvent,
+        Attendees: updatedAttendees
+    };
+
+    try {
+        const response = await fetch(`${EVENT_API}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedEvent),
+        });
+
+        if (response.ok) {
+            console.log(user.attributes.email + " has joined the event " + selectedEvent.Name);
+        } else {
+            console.error("Failed to join the event");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+    navigation.goBack(); 
+};
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
     
@@ -102,21 +130,43 @@ const EventScreen = ({ route, navigation }) => {
 
       {/* Leave Event Button */}
       <Layout style={{ padding: 16}}>
-      <Button
-          style={{marginBottom: 10}}
-          appearance="outline"
-          status="primary"
-          onPress={() => navigation.navigate("ChatScreen", {event: event})}
-        >
-            Chat
-        </Button>
-        <Button
-          appearance="outline"
-          status="danger"
-          onPress={() => leaveEvent(event)}
-        >
-            {event.Organizer === user.attributes.email ? "Delete Event" : "Leave Event"}
-        </Button>
+      {!isFindPage ? (
+          <>
+            <Button
+              style={{ marginBottom: 10 }}
+              appearance="outline"
+              status="primary"
+              onPress={() => navigation.navigate("ChatScreen", { event: event })}
+            >
+              Chat
+            </Button>
+            {event.Organizer === user.attributes.email ? (
+              <Button
+                appearance="outline"
+                status="danger"
+                onPress={() => leaveEvent(event)}
+              >
+                Delete Event
+              </Button>
+            ) : (
+              <Button
+                appearance="outline"
+                status="danger"
+                onPress={() => leaveEvent(event)}
+              >
+                Leave Event
+              </Button>
+            )}
+          </>
+        ) : (
+          <Button
+            appearance="outline"
+            status="success"
+            onPress={() => joinEvent(event)}
+          >
+            Join Event
+          </Button>
+        )}
       </Layout>
     </ScrollView>
   );

@@ -22,7 +22,7 @@ import {
 import * as Location from "expo-location";
 import RenderItem from "../../components/RenderItem";
 import { useUser } from "../../contexts/UserContext";
-import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
+import { NavigationContainer, useFocusEffect, CommonActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Header from "../../components/Header";
@@ -32,7 +32,7 @@ import ChatScreen from "./ChatScreen";
 const EVENT_API =
   "https://yjtjeq0lb1.execute-api.us-east-2.amazonaws.com/event";
 
-const JoinedScreen = ({ navigation, profile }) => {
+const JoinedScreen = ({ navigation, isFindPage }) => {
   const [events, setEvents] = useState([]);
   const [sortOption, setSortOption] = useState("Name"); // Default sort option
   const [filterOptions, setFilterOptions] = useState([
@@ -46,7 +46,7 @@ const JoinedScreen = ({ navigation, profile }) => {
 
   const hardcodeLat = 30.28809642898832;
   const hardcodeLong = -97.73521176086915;
-  
+
   useFocusEffect(
     React.useCallback(() => {
       // This block will be executed when the screen is focused
@@ -55,21 +55,35 @@ const JoinedScreen = ({ navigation, profile }) => {
       return () => {
         // Cleanup (if needed) when the component is unmounted or loses focus
       };
-    }, [])
+    }, [isFindPage])
   );
+  
 
   const fetchEvents = async () => {
-    try {
-      const response = await fetch(EVENT_API);
-      const allEvents = await response.json();
-      const userEvents = allEvents.filter(
-        (event) =>
-          event.Attendees.includes(user.attributes.email) ||
-          event.Organizer === user.attributes.email
-      );
-      applyFiltersAndSort(userEvents);
-    } catch (error) {
-      console.log(error);
+    if (isFindPage) {
+      try {
+        const response = await fetch(EVENT_API);
+        const allEvents = await response.json();
+        const availableEvents = allEvents.filter(event => 
+          !event.Attendees.includes(user.attributes.email) && event.Organizer !== user.attributes.email
+        );
+        applyFiltersAndSort(availableEvents);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        const response = await fetch(EVENT_API);
+        const allEvents = await response.json();
+        const userEvents = allEvents.filter(
+          (event) =>
+            event.Attendees.includes(user.attributes.email) ||
+            event.Organizer === user.attributes.email
+        );
+        applyFiltersAndSort(userEvents);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -87,19 +101,19 @@ const JoinedScreen = ({ navigation, profile }) => {
             longitude: hardcodeLong,
           };
           const distance = getDistance(userLocation, eventLocation);
-  
+
           const newd = parseFloat(distance * 0.000621371192).toFixed(2);
           return { ...event, distance: newd };
         }
       }
       return event;
     });
-  
+
     return eventsWithDistances;
-  };  
+  };
 
   const applyFiltersAndSort = (events) => {
-    let eventsWithDistances = calculateDistances(events)
+    let eventsWithDistances = calculateDistances(events);
     let filteredEvents = filterEvents(eventsWithDistances, filterOptions);
     let sortedEvents = applySorting(filteredEvents, sortOption);
     setEvents(sortedEvents);
@@ -295,18 +309,33 @@ const JoinedScreen = ({ navigation, profile }) => {
 
 const JoinedPageStack = createStackNavigator();
 
-export default function Joined() {
+export default function Joined({ isFindPage }) {
+
+  const navigationRef = React.useRef(null);
+
+  useEffect(() => {
+    if (navigationRef.current) {
+      // Resetting the navigation stack to the initial route when isFindPage changes
+      navigationRef.current.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Joined' }],
+        })
+      );
+    }
+  }, [isFindPage]);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer key={isFindPage ? 'FindPage' : 'JoinedPage'}>
       <JoinedPageStack.Navigator
         initialRouteName="Joined"
         screenOptions={{ headerShown: false }}
       >
         <JoinedPageStack.Screen name="Joined">
-          {(props) => <JoinedScreen {...props} />}
+          {(props) => <JoinedScreen {...props} isFindPage={isFindPage} />}
         </JoinedPageStack.Screen>
-        <JoinedPageStack.Screen name="EventScreen">
-          {(props) => <EventScreen {...props} />}
+        <JoinedPageStack.Screen name="EventScreen" >
+          {(props) => <EventScreen {...props} isFindPage={isFindPage} />}
         </JoinedPageStack.Screen>
         <JoinedPageStack.Screen name="ChatScreen">
           {(props) => <ChatScreen {...props} />}
