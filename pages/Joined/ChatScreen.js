@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, KeyboardAvoidingView } from "react-native";
 import { Icon, Input } from "@ui-kitten/components"; // Import UI Kitten components
 
 import { useUser } from "../../contexts/UserContext";
@@ -91,12 +91,11 @@ const ChatScreen = ({ route, navigation }) => {
         onBackPress={() => navigation.goBack()}
       />
 
-<ScrollView
+      <ScrollView
         ref={scrollViewRef} // Attach the ref to the ScrollView
         onContentSizeChange={scrollToBottom} // Scroll to the end when content size changes
         style={{ flex: 1, margin: 10 }}
       >
-        
         {chatMessages
           .filter((message) => message.createdAt)
           .sort((a, b) => a.createdAt - b.createdAt)
@@ -111,10 +110,11 @@ const ChatScreen = ({ route, navigation }) => {
         {/* Spacer after the last message */}
         <View style={{ height: 60 }} />
       </ScrollView>
-      <View
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{
           position: "flex",
-          bottom: 58, // Adjust this value as needed
+          bottom: 77, // Adjust this value as needed
           left: 0,
           right: 0,
           padding: 10,
@@ -145,7 +145,7 @@ const ChatScreen = ({ route, navigation }) => {
           fill="#8F9BB3" // Icon color
           onPress={handleSendMessage} // Handle the onPress event for sending the message
         />
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };

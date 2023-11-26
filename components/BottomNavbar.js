@@ -55,7 +55,7 @@ const BottomNavbar = ({ currentPage, handleNavigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.bottomBar}>
-        <BottomNavigation selectedIndex={titles.indexOf(currentPage)} onSelect={index => handleTabSelect(index)}>
+        <BottomNavigation selectedIndex={titles.indexOf(currentPage)} onSelect={index => handleTabSelect(index)} style={{ paddingBottom: 20 }}>
           {titles.map((title, index) => (
             <BottomNavigationTab key={index} icon={icons[index]} title={title} />
           ))}
