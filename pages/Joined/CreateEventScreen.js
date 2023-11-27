@@ -254,7 +254,7 @@ const CreateEventScreen = ({ navigation }) => {
 
     const eventDate = combineDateTime(date, time);
     const dateString = eventDate.toLocaleDateString();
-    const timeString = eventDate.toLocaleTimeString();
+    const timeString = eventDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     const eventDateTimeString = `${dateString} ${timeString}`;
 
     const event = {
@@ -300,17 +300,17 @@ const CreateEventScreen = ({ navigation }) => {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Created event with ID: " + responseData);
-        setEventID(responseData);
-        const eventCollection = collection(db, responseData);
-        const welcomeMessageDocRef = doc(eventCollection, "welcomeMessage");
-        await setDoc(welcomeMessageDocRef, welcomeMessage);
-        console.log("Event created:", event);
+        // setEventID(responseData);
+        // const eventCollection = collection(db, responseData);
+        // const welcomeMessageDocRef = doc(eventCollection, "welcomeMessage");
+        // await setDoc(welcomeMessageDocRef, welcomeMessage);
+        // console.log("Event created:", event);
         // Clear input fields
-        setEventTitle("");
-        setEventPicture("");
-        setEventLocation("");
-        setMaxCapacity("");
-        setSport("");
+        // setEventTitle("");
+        // setEventPicture("");
+        // setEventLocation("");
+        // setMaxCapacity("");
+        // setSport("");
         // Navigate back to the previous screen or any desired screen
         navigation.goBack();
       } else {
@@ -443,7 +443,7 @@ const CreateEventScreen = ({ navigation }) => {
 
           {/* Displaying the currently picked time */}
           <Text category="label" style={{ marginBottom: 8 }}>
-            Selected Time: {time.toLocaleTimeString()}
+            Selected Time: {time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
           </Text>
           <Button
             onPress={() => setShowTimePicker(true)}
