@@ -22,7 +22,11 @@ import {
 import * as Location from "expo-location";
 import RenderItem from "../../components/RenderItem";
 import { useUser } from "../../contexts/UserContext";
-import { NavigationContainer, useFocusEffect, CommonActions } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  useFocusEffect,
+  CommonActions,
+} from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Header from "../../components/Header";
@@ -57,16 +61,30 @@ const JoinedScreen = ({ navigation, isFindPage }) => {
       };
     }, [isFindPage])
   );
-  
 
   const fetchEvents = async () => {
     if (isFindPage) {
       try {
         const response = await fetch(EVENT_API);
         const allEvents = await response.json();
-        const availableEvents = allEvents.filter(event => 
-          !event.Attendees.includes(user.attributes.email) && event.Organizer !== user.attributes.email
-        );
+        const today = new Date();
+        const availableEvents = allEvents.filter((event) => {
+          // Extract the date part from the EventTime string
+          const datePart = event.EventTime.split(" ")[0];
+
+          // Extract day, month, and year components
+          const [month, day, year] = datePart.split("/").map(Number);
+
+          // Create a new Date object
+          const eventDate = new Date(year, month - 1, day + 1); // Note: months are zero-based in JavaScript Date object
+
+          // Check if the event date is ahead of today's date
+          return (
+            !event.Attendees.includes(user.attributes.email) &&
+            event.Organizer !== user.attributes.email &&
+            eventDate > today
+          );
+        });
         applyFiltersAndSort(availableEvents);
       } catch (error) {
         console.log(error);
@@ -75,11 +93,24 @@ const JoinedScreen = ({ navigation, isFindPage }) => {
       try {
         const response = await fetch(EVENT_API);
         const allEvents = await response.json();
-        const userEvents = allEvents.filter(
-          (event) =>
-            event.Attendees.includes(user.attributes.email) ||
-            event.Organizer === user.attributes.email
-        );
+        const today = new Date();
+        const userEvents = allEvents.filter((event) => {
+          // Extract the date part from the EventTime string
+          const datePart = event.EventTime.split(" ")[0];
+
+          // Extract day, month, and year components
+          const [month, day, year] = datePart.split("/").map(Number);
+
+          // Create a new Date object
+          const eventDate = new Date(year, month - 1, day + 1); // Note: months are zero-based in JavaScript Date object
+
+          // Check if the event date is ahead of today's date
+          return (
+            (event.Attendees.includes(user.attributes.email) ||
+              event.Organizer === user.attributes.email) &&
+            eventDate > today
+          );
+        });
         applyFiltersAndSort(userEvents);
       } catch (error) {
         console.log(error);
@@ -248,7 +279,6 @@ const JoinedScreen = ({ navigation, isFindPage }) => {
       {/* Custom Header */}
       <Header
         title={isFindPage ? "Find Events" : "My Joined Events"}
-
         accessoryButtons={
           <>
             <TopNavigationAction
@@ -311,7 +341,6 @@ const JoinedScreen = ({ navigation, isFindPage }) => {
 const JoinedPageStack = createStackNavigator();
 
 export default function Joined({ isFindPage }) {
-
   const navigationRef = React.useRef(null);
 
   useEffect(() => {
@@ -320,14 +349,14 @@ export default function Joined({ isFindPage }) {
       navigationRef.current.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: 'Joined' }],
+          routes: [{ name: "Joined" }],
         })
       );
     }
   }, [isFindPage]);
 
   return (
-    <NavigationContainer key={isFindPage ? 'FindPage' : 'JoinedPage'}>
+    <NavigationContainer key={isFindPage ? "FindPage" : "JoinedPage"}>
       <JoinedPageStack.Navigator
         initialRouteName="Joined"
         screenOptions={{ headerShown: false }}
@@ -335,7 +364,7 @@ export default function Joined({ isFindPage }) {
         <JoinedPageStack.Screen name="Joined">
           {(props) => <JoinedScreen {...props} isFindPage={isFindPage} />}
         </JoinedPageStack.Screen>
-        <JoinedPageStack.Screen name="EventScreen" >
+        <JoinedPageStack.Screen name="EventScreen">
           {(props) => <EventScreen {...props} isFindPage={isFindPage} />}
         </JoinedPageStack.Screen>
         <JoinedPageStack.Screen name="ChatScreen">
