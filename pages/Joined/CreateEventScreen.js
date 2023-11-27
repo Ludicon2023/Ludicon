@@ -509,7 +509,7 @@ const CreateEventScreen = ({ navigation }) => {
         <Button onPress={createEvent} style={{ padding: 16 }}>
           Create Event
         </Button>
-        <View style={{ height: 60 }} />
+        <View style={{ height: 60, padding: 40 }} />
       </Layout>
     </ScrollView>
   );
