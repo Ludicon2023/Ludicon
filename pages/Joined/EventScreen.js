@@ -147,6 +147,10 @@ const EventScreen = ({ route, navigation, isFindPage }) => {
       />
 
       <RenderItem item={event} />
+      <Layout style = {{padding: 16}}>
+        <Text category="h6">Description:</Text>
+        <Text>{event.Description}</Text>
+      </Layout>
 
       {/* Leave Event Button */}
       <Layout style={{ padding: 16 }}>
