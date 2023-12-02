@@ -97,16 +97,24 @@ const ChatScreen = ({ route, navigation }) => {
         style={{ flex: 1, margin: 10 }}
       >
         {chatMessages
-          .filter((message) => message.createdAt)
-          .sort((a, b) => a.createdAt - b.createdAt)
-          .map((message, index) => (
-            <IndividualMessageBlueprint
-              key={index}
-              displayedUser={message.displayedUser}
-              message={message.message}
-              sender={message.sender}
-            />
-          ))}
+                .filter((message) => message.createdAt)
+                .sort((a, b) => a.createdAt - b.createdAt)
+                .map((message, index, array) => {
+                    // Determine if the sender's name should be shown
+                    const showSenderName = 
+                        index === array.length - 1 || // Last message in the array
+                        message.sender !== array[index + 1]?.sender; // Different sender for the next message
+
+                    return (
+                        <IndividualMessageBlueprint
+                            key={index}
+                            displayedUser={message.displayedUser}
+                            message={message.message}
+                            sender={message.sender}
+                            showSenderName={showSenderName}
+                        />
+                    );
+                })}
         {/* Spacer after the last message */}
         <View style={{ height: 60 }} />
       </ScrollView>

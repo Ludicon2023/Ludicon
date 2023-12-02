@@ -54,6 +54,7 @@ const CreateEventScreen = ({ navigation }) => {
   const [eventLon, setEventLon] = useState(null);
   const [filteredSports, setFilteredSports] = useState([]);
   const [autoGeneratePicture, setAutoGeneratePicture] = useState(true);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const today = new Date();
   const [date, setDate] = useState(today);
@@ -341,12 +342,14 @@ const CreateEventScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
+    if (showSuggestions) {
     fetch(
       `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyDw5Hh1zQIXpw6UyG1-85cSJVSdRMYVYl8&input=${eventLocation}`
     )
       .then((res) => res.json())
       .then((data) => setSuggestions(data));
-  }, [eventLocation]);
+  }}, [eventLocation, showSuggestions]);
+
   useEffect(() => {
     //console.log(suggestions);
   }, []);
@@ -403,15 +406,19 @@ const CreateEventScreen = ({ navigation }) => {
           placeholder="Event Location"
           label="Event Location"
           value={eventLocation}
-          onChangeText={(text) => setEventLocation(text)}
+          onChangeText={
+            (text) => {setEventLocation(text);
+              setShowSuggestions(true);}
+            
+          }
         />
 
-        {suggestions?.predictions.map((prediction) => (
+        {showSuggestions && suggestions?.predictions.map((prediction) => (
           <Pressable
-            onPress={() => {
-              setEventLocation(prediction.description);
-              setTimeout(() => setSuggestions(null), 200);
-            }}
+          onPress={() => {
+            setEventLocation(prediction.description);
+            setShowSuggestions(false);
+        }}
           >
             <Text>{prediction.description}</Text>
           </Pressable>
