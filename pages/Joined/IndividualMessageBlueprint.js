@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import {
-  useTheme,
+  useTheme, Text
 } from '@ui-kitten/components';
 
 const IndividualMessageBlueprint = ({ displayedUser, message, sender, showSenderName}) => {
@@ -16,6 +16,7 @@ const IndividualMessageBlueprint = ({ displayedUser, message, sender, showSender
           backgroundColor: isUserMessage ? theme['color-info-500'] : theme['color-success-600'],
           padding: 10,
           margin: 5,
+          marginHorizontal: 10,
           borderRadius: 10,
           maxWidth: '70%',
         }}
@@ -34,7 +35,10 @@ const IndividualMessageBlueprint = ({ displayedUser, message, sender, showSender
           style={{
             color: 'black',
             fontSize: 12,
-            marginTop: 2,
+            marginTop: -4,
+            marginRight: 18,
+            left: 6,
+            paddingBottom: 20,
             marginLeft: isUserMessage ? 5 : 5, // Adjust alignment with bubble
           }}
         >

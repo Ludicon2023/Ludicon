@@ -141,6 +141,7 @@ const ChatScreen = ({ route, navigation }) => {
             borderRadius: 20, // To match the border radius of the container
             paddingLeft: 15, // Padding for text inside the input
             marginRight: 10,
+            marginBottom: 16,
           }}
           placeholder="Type your message here"
           value={messageInput}
@@ -150,6 +151,7 @@ const ChatScreen = ({ route, navigation }) => {
           name="paper-plane" // Adjust the name to the desired UI Kitten icon
           width={30}
           height={30}
+          marginBottom ={12}
           fill="#8F9BB3" // Icon color
           onPress={handleSendMessage} // Handle the onPress event for sending the message
         />
