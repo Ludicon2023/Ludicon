@@ -203,12 +203,21 @@ const CreateEventScreen = ({ navigation }) => {
   const axios = require("axios");
   const createEvent = async () => {
     // Validation to ensure all fields are filled
+    
     if (!eventTitle || !eventLocation || !maxCapacity || !sport) {
       alert("All fields are required!");
       return;
     }
     let pictureUrl = eventPicture;
-    if (autoGeneratePicture) {
+    const hardcodedImages = {
+      "basketball": "https://media.kvue.com/assets/KVUE/images/a84203c8-37f3-4b44-918e-1f7c78cc9505/a84203c8-37f3-4b44-918e-1f7c78cc9505_1140x641.jpg",
+      "soccer": "https://foothill.edu/news/images/soccerfieldx700.jpg",
+      "pickleball": "https://cdn.bcm.edu/sites/default/files/2022-11/pickleball-racket-and-ball.jpg"
+    };
+
+    if (hardcodedImages[sport.toLowerCase()]) {
+      pictureUrl = hardcodedImages[sport.toLowerCase()];
+    } else if (autoGeneratePicture && !eventPicture) {
       if (!isValidSport(sport)) {
         alert("Please enter a valid sport to auto-generate images.");
         return;
